@@ -131,12 +131,3 @@ protected:
 
  private:
 };
-
-// Derive from ADS1105 & override construction to set properties
-class Adafruit_ADS1115 : public NanoShield_ADC
-{
- public:
-  Adafruit_ADS1115(uint8_t i2cAddress = ADS1015_ADDRESS);
-
- private:
-};
