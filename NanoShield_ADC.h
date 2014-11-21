@@ -121,15 +121,15 @@ protected:
 
  public:
   NanoShield_ADC(uint8_t i2cAddress = ADS1015_ADDRESS);
-  void writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value);
-  uint16_t readRegister(uint8_t i2cAddress, uint8_t reg);
+  void writeRegister(uint8_t , uint8_t , uint16_t );
+  uint16_t readRegister(uint8_t , uint8_t );
   void begin(void);
-  uint16_t  readADC_SingleEnded(uint8_t channel);
+  uint16_t  readADC_SingleEnded(uint8_t );
   int16_t   readADC_Differential_0_1(void);
   int16_t   readADC_Differential_2_3(void);
-  void      startComparator_SingleEnded(uint8_t channel, int16_t threshold);
+  void      startComparator_SingleEnded(uint8_t , int16_t );
   int16_t   getLastConversionResults();
-  void      setGain(Gain_t gain);
+  void      setGain(Gain_t );
   Gain_t getGain(void);
 
  private:
