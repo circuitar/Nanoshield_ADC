@@ -134,6 +134,7 @@ protected:
 
  private:
 };
+<<<<<<< HEAD
 
 // Derive from ADS1105 & override construction to set properties
 class Adafruit_ADS1115 : public NanoShield_ADC
@@ -144,3 +145,5 @@ class Adafruit_ADS1115 : public NanoShield_ADC
  private:
 };
 #endif
+=======
+>>>>>>> 1c11c1bb8472d06adbe27ba9d8955a53b507a417
