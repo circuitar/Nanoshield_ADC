@@ -6,14 +6,17 @@ Copyright (c) 2014 Circuitar
 This software is released under the MIT license. See the attached LICENSE file for details.
 */
 
+#ifndef LIB_NanoShield_ADC_H
+#define LIB_NanoShield_ADC_H
 
-#ifdef RASPBERRY
+#if defined(RASPBERRY)
     #include "arduPi.h"
-#else
+#endif
+/*#ifndef RASPBERRY
     #include "Arduino.h"
     #include <Wire.h>
 #endif
-
+*/
 
 
 /*=========================================================================
@@ -140,3 +143,4 @@ class Adafruit_ADS1115 : public NanoShield_ADC
 
  private:
 };
+#endif

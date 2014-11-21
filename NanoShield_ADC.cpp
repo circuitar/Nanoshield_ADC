@@ -6,9 +6,16 @@ Copyright (c) 2014 Circuitar
 This software is released under the MIT license. See the attached LICENSE file for details.
 */
 
+//#define RASPBERRY
 #include "NanoShield_ADC.h"
 
-
+/*#ifdef RASPBERRY
+	#include "arduPi.h"
+#else
+	#include "Arduino.h"
+	#include <Wire.h>
+#endif
+*/
 NanoShield_ADC::NanoShield_ADC(uint8_t i2cAddress)
 {
    m_i2cAddress = i2cAddress;
