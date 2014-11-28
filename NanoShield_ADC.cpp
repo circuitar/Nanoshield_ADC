@@ -6,17 +6,9 @@ Copyright (c) 2014 Circuitar
 This software is released under the MIT license. See the attached LICENSE file for details.
 */
 
-//#define RASPBERRY
-#include "arduPi.h"
+
 #include "NanoShield_ADC.h"
 
-/*#ifdef RASPBERRY
-	#include "arduPi.h"
-#else
-	#include "Arduino.h"
-	#include <Wire.h>
-#endif
-*/
 NanoShield_ADC::NanoShield_ADC(uint8_t i2cAddress)
 {
    m_i2cAddress = i2cAddress;
@@ -239,25 +231,35 @@ int16_t NanoShield_ADC::getLastConversionResults()
 }
 
 void NanoShield_ADC::writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value) {
+  Wire.beginTransmission(i2cAddress);
+  #ifdef RASPBERRY
   char buf[3];
   buf[0] = reg;
   buf[1] = value >> 8;
   buf[2] = value & 0xFF;
-  Wire.beginTransmission(i2cAddress);
   Wire.write(buf,3);
-  //Wire.write(value>>8);
-  //Wire.write(value & 0xFF);
-  Wire.endTransmission();
+  #else
+  Wire.write((uint8_t)reg);
+  Wire.write((uint8_t)(value>>8));
+  Wire.write((uint8_t)(value & 0xFF));
+  #endif
+  Wire.endTransmission();  
+
+  
 }
 
 uint16_t NanoShield_ADC::readRegister(uint8_t i2cAddress, uint8_t reg) {
+  
   Wire.beginTransmission(i2cAddress);
   Wire.write(ADS1015_REG_POINTER_CONVERT);
   Wire.endTransmission();
   
-  //Wire.requestFrom(i2cAddress,(uint8_t)2);
-  Wire.beginTransmission(i2cAddress);
-  return (uint16_t)Wire.read();
-  // return (Wire.read() << 8 | Wire.read());
-  // return Wire.read_reg(ADS1015_REG_POINTER_CONVERT,2);
+  Wire.requestFrom(i2cAddress,(uint8_t)2);
+#ifdef RASPBERRY
+  unsigned char *ret = Wire.read(2); //read 2 bytes
+  uint16_t aux = ret[0] << 8 | ret[1];
+  return (uint16_t)aux;
+#else
+  return (Wire.read() << 8 | Wire.read());
+#endif
 }

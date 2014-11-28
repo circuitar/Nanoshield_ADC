@@ -435,7 +435,8 @@ class WirePi{
 		int endTransmission(int);
 		int endTransmission();
 		int requestFrom(unsigned char address,int quantity);
-		uint16_t read();
+		unsigned char read();
+                unsigned char read(int );
 		uint8_t read(unsigned char* buf);
 		uint8_t read_rs(char* regaddr, char* buf, uint32_t len);
 		void wait_i2c_done();

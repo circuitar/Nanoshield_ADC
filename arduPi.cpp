@@ -695,16 +695,19 @@ int WirePi::requestFrom(unsigned char address,int quantity){
 }
 
 //Reads a byte that was transmitted from a slave device to a master after a call to WirePi::requestFrom()
-uint16_t WirePi::read(){
-	unsigned char buf[2];
-	//if(i2c_bytes_to_read < 1)
-	i2c_bytes_to_read = 2;
-	//buf = malloc(sizeof(char)*i2c_bytes_to_read);
+unsigned char WirePi::read(){
+	char buf;
+	i2c_bytes_to_read=1;
+	read(&buf);
+	return (unsigned char)buf;
+}
+//reads "quantity" bytes that was transmitted from a slave to a master after a call to WirePi::requestFrom()
+unsigned char WirePi::read(int quantity){
+        unsigned char *buf;
+        buf = malloc(sizeof(char)*quantity); //allocate vector to receive data
 	read(buf);
-
- 	uint16_t aux = buf[0] << 8 | buf[1];
-	return (uint16_t) aux;
-	//return (uint16_t)(buf[1] << 8) | (buf[0]);
+	return (unsigned char) aux;
+	
 }
 
 uint8_t WirePi::read(unsigned char* buf){

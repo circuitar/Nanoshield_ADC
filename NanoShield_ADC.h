@@ -9,14 +9,14 @@ This software is released under the MIT license. See the attached LICENSE file f
 #ifndef NanoShield_ADC_H
 #define NanoShield_ADC_H
 
-#if defined(RASPBERRY)
+#ifdef RASPBERRY
     #include "arduPi.h"
 #endif
-/*#ifndef RASPBERRY
+#ifndef RASPBERRY
     #include "Arduino.h"
     #include <Wire.h>
 #endif
-*/
+
 
 
 /*=========================================================================
