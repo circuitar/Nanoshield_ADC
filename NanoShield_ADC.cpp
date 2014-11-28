@@ -256,11 +256,10 @@ uint16_t NanoShield_ADC::readRegister(uint8_t i2cAddress, uint8_t reg) {
   
   Wire.requestFrom(i2cAddress,(uint8_t)2);
 #ifdef RASPBERRY
-  unsigned char ret[2];
-  ret = Wire.read(2); //read 2 bytes
+  unsigned char *ret;
+  *ret = Wire.read(2); //read 2 bytes
   uint16_t aux = ret[0] << 8 | ret[1];
   return (uint16_t)aux;
-  Wire.read(buf,n);
 #else
   return (Wire.read() << 8 | Wire.read());
 #endif

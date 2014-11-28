@@ -703,9 +703,11 @@ unsigned char WirePi::read(){
 }
 //reads "quantity" bytes that was transmitted from a slave to a master after a call to WirePi::requestFrom()
 unsigned char WirePi::read(int quantity){
-        unsigned char buf[quantity];
+        unsigned char *buf;
+	buf = malloc(sizeof(char)*quantity);
+	i2c_bytes_to_read = quantity;
 	read(buf);
-	return (unsigned char)buf;
+	return (unsigned char)*buf;
 	
 }
 
