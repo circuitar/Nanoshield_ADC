@@ -435,11 +435,11 @@ class WirePi{
 		int endTransmission(int);
 		int endTransmission();
 		int requestFrom(unsigned char address,int quantity);
-		unsigned char read();
-		uint8_t read(char* buf);
+		uint16_t read();
+		uint8_t read(unsigned char* buf);
 		uint8_t read_rs(char* regaddr, char* buf, uint32_t len);
 		void wait_i2c_done();
-
+		unsigned char read_reg(char *reg,uint32_t len);
 };
 
 class SPIPi{

@@ -6,8 +6,8 @@ Copyright (c) 2014 Circuitar
 This software is released under the MIT license. See the attached LICENSE file for details.
 */
 
-#ifndef LIB_NanoShield_ADC_H
-#define LIB_NanoShield_ADC_H
+#ifndef NanoShield_ADC_H
+#define NanoShield_ADC_H
 
 #if defined(RASPBERRY)
     #include "arduPi.h"
@@ -22,7 +22,7 @@ This software is released under the MIT license. See the attached LICENSE file f
 /*=========================================================================
     I2C ADDRESS/BITS
     -----------------------------------------------------------------------*/
-    #define ADS1015_ADDRESS                 (0x48)    // 1001 000 (ADDR = GND)
+    #define ADS1115_ADDRESS                 (0x48)    // 0100 1000 (ADDR = GND)
 /*=========================================================================*/
 
 /*=========================================================================
@@ -120,7 +120,7 @@ protected:
    Gain_t m_gain;
 
  public:
-  NanoShield_ADC(uint8_t i2cAddress = ADS1015_ADDRESS);
+  NanoShield_ADC(uint8_t i2cAddress = ADS1115_ADDRESS);
   void writeRegister(uint8_t , uint8_t , uint16_t );
   uint16_t readRegister(uint8_t , uint8_t );
   void begin(void);

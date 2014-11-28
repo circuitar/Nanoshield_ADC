@@ -7,6 +7,7 @@ This software is released under the MIT license. See the attached LICENSE file f
 */
 
 //#define RASPBERRY
+#include "arduPi.h"
 #include "NanoShield_ADC.h"
 
 /*#ifdef RASPBERRY
@@ -76,16 +77,13 @@ uint16_t NanoShield_ADC::readADC_SingleEnded(uint8_t channel) {
 
   // Set 'start single-conversion' bit
   config |= ADS1015_REG_CONFIG_OS_SINGLE;
-
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1015_REG_POINTER_CONFIG, config);
-
   // Wait for the conversion to complete
   delay(m_conversionDelay);
-
   // Read the conversion results
   // Shift 12-bit results right 4 bits for the ADS1015
-  return readRegister(m_i2cAddress, ADS1015_REG_POINTER_CONVERT) >> m_bitShift;  
+  return readRegister(m_i2cAddress, ADS1015_REG_POINTER_CONVERT) >> m_bitShift; 
 }
 
 
@@ -241,10 +239,14 @@ int16_t NanoShield_ADC::getLastConversionResults()
 }
 
 void NanoShield_ADC::writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value) {
+  char buf[3];
+  buf[0] = reg;
+  buf[1] = value >> 8;
+  buf[2] = value & 0xFF;
   Wire.beginTransmission(i2cAddress);
-  Wire.write((uint8_t)reg);
-  Wire.write((uint8_t)(value>>8));
-  Wire.write((uint8_t)(value & 0xFF));
+  Wire.write(buf,3);
+  //Wire.write(value>>8);
+  //Wire.write(value & 0xFF);
   Wire.endTransmission();
 }
 
@@ -252,8 +254,10 @@ uint16_t NanoShield_ADC::readRegister(uint8_t i2cAddress, uint8_t reg) {
   Wire.beginTransmission(i2cAddress);
   Wire.write(ADS1015_REG_POINTER_CONVERT);
   Wire.endTransmission();
-  Wire.requestFrom(i2cAddress, (uint8_t)2);
-  return ((Wire.read() << 8) | Wire.read());  
+  
+  //Wire.requestFrom(i2cAddress,(uint8_t)2);
+  Wire.beginTransmission(i2cAddress);
+  return (uint16_t)Wire.read();
+  // return (Wire.read() << 8 | Wire.read());
+  // return Wire.read_reg(ADS1015_REG_POINTER_CONVERT,2);
 }
-
-

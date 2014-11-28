@@ -554,8 +554,8 @@ WirePi::WirePi(){
 		printf("Failed to map the physical GPIO registers into the virtual memory space.\n");
 	}
 	memfd = -1;
+
 	i2c_byte_wait_us = 0;
-	
 	// Open the master /dev/memory device
     if ((memfd = open("/dev/mem", O_RDWR | O_SYNC) ) < 0) 
     {
@@ -574,8 +574,7 @@ WirePi::WirePi(){
 
 //Initiate the Wire library and join the I2C bus.
 void WirePi::begin(){
-
-	volatile uint32_t* paddr = bcm2835_bsc1 + BCM2835_BSC_DIV/4;
+    volatile uint32_t* paddr = bcm2835_bsc1 + BCM2835_BSC_DIV/4;
     // Set the I2C/BSC1 pins to the Alt 0 function to enable I2C access on them
     bcm2835_gpio_fsel(RPI_V2_GPIO_P1_03, BCM2835_GPIO_FSEL_ALT0); // SDA
     bcm2835_gpio_fsel(RPI_V2_GPIO_P1_05, BCM2835_GPIO_FSEL_ALT0); // SCL
@@ -586,6 +585,8 @@ void WirePi::begin(){
     // 1000000 = micros seconds in a second
     // 9 = Clocks per byte : 8 bits + ACK
     i2c_byte_wait_us = ((float)cdiv / BCM2835_CORE_CLK_HZ) * 1000000 * 9;
+    i2c_bytes_to_read = 1;
+	
 }
 
 //Begin a transmission to the I2C slave device with the given address
@@ -638,11 +639,13 @@ uint8_t WirePi::write(const char * buf, uint32_t len){
     while(!(bcm2835_peri_read_nb(status) & BCM2835_BSC_S_DONE ))
     {
         while ( remaining && (bcm2835_peri_read_nb(status) & BCM2835_BSC_S_TXD ))
+        //while ( remaining)
     	{
         	// Write to FIFO, no barrier
         	bcm2835_peri_write_nb(fifo, buf[i]);
         	i++;
         	remaining--;
+		//delayMicroseconds(300);
     	}
     }
 
@@ -684,7 +687,7 @@ int WirePi::endTransmission(){
 //Used by the master to request bytes from a slave device
 int WirePi::requestFrom(unsigned char address,int quantity){
 	// Set I2C Device Address
-	volatile uint32_t* paddr = bcm2835_bsc1 + BCM2835_BSC_A/4;
+  	volatile uint32_t* paddr = bcm2835_bsc1 + BCM2835_BSC_A/4;
 	bcm2835_peri_write(paddr, address);
 	
 	i2c_bytes_to_read = quantity;
@@ -692,14 +695,19 @@ int WirePi::requestFrom(unsigned char address,int quantity){
 }
 
 //Reads a byte that was transmitted from a slave device to a master after a call to WirePi::requestFrom()
-unsigned char WirePi::read(){
-	char buf;
-	i2c_bytes_to_read=1;
-	read(&buf);
-	return (unsigned char)buf;
+uint16_t WirePi::read(){
+	unsigned char buf[2];
+	//if(i2c_bytes_to_read < 1)
+	i2c_bytes_to_read = 2;
+	//buf = malloc(sizeof(char)*i2c_bytes_to_read);
+	read(buf);
+
+ 	uint16_t aux = buf[0] << 8 | buf[1];
+	return (uint16_t) aux;
+	//return (uint16_t)(buf[1] << 8) | (buf[0]);
 }
 
-uint8_t WirePi::read(char* buf){
+uint8_t WirePi::read(unsigned char* buf){
     volatile uint32_t* dlen    = bcm2835_bsc1 + BCM2835_BSC_DLEN/4;
     volatile uint32_t* fifo    = bcm2835_bsc1 + BCM2835_BSC_FIFO/4;
     volatile uint32_t* status  = bcm2835_bsc1 + BCM2835_BSC_S/4;
@@ -708,7 +716,6 @@ uint8_t WirePi::read(char* buf){
     uint32_t remaining = i2c_bytes_to_read;
     uint32_t i = 0;
     uint8_t reason = BCM2835_I2C_REASON_OK;
-
     // Clear FIFO
     bcm2835_peri_set_bits(control, BCM2835_BSC_C_CLEAR_1 , BCM2835_BSC_C_CLEAR_1 );
     // Clear Status
@@ -759,7 +766,6 @@ uint8_t WirePi::read(char* buf){
     }
 
     bcm2835_peri_set_bits(control, BCM2835_BSC_S_DONE , BCM2835_BSC_S_DONE);
-
     return reason;
 }
 
@@ -847,7 +853,11 @@ uint8_t WirePi::read_rs(char* regaddr, char* buf, uint32_t len){
     return reason;
 }
 
-
+unsigned char WirePi::read_reg(char *reg, uint32_t len){
+	char buf;
+	read_rs(reg,&buf,len);
+	return (unsigned char) buf;
+}
 /*******************
  * Private methods *
  *******************/
