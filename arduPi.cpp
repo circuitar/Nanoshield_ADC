@@ -696,7 +696,7 @@ int WirePi::requestFrom(unsigned char address,int quantity){
 
 //Reads a byte that was transmitted from a slave device to a master after a call to WirePi::requestFrom()
 unsigned char WirePi::read(){
-	char buf;
+	unsigned char buf;
 	i2c_bytes_to_read  = 1;
 	read(&buf);
 	return (unsigned char)buf;
