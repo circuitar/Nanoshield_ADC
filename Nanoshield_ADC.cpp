@@ -230,17 +230,17 @@ int16_t Nanoshield_ADC::getLastConversionResults()
 
 void Nanoshield_ADC::writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value) {
   Wire.beginTransmission(i2cAddress);
-  #ifdef RASPBERRY
+#ifdef ARDUPI
   char buf[3];
   buf[0] = reg;
   buf[1] = value >> 8;
   buf[2] = value & 0xFF;
   Wire.write(buf,3);
-  #else
+#else
   Wire.write((uint8_t)reg);
   Wire.write((uint8_t)(value>>8));
   Wire.write((uint8_t)(value & 0xFF));
-  #endif
+#endif
   Wire.endTransmission();  
 
   
@@ -253,7 +253,7 @@ uint16_t Nanoshield_ADC::readRegister(uint8_t i2cAddress, uint8_t reg) {
   Wire.endTransmission();
   
   Wire.requestFrom(i2cAddress,(uint8_t)2);
-#ifdef RASPBERRY
+#ifdef ARDUPI
   unsigned char *ret;
   ret = (unsigned char *)malloc(sizeof(char)*2);
   *ret = Wire.read((int)2); //read 2 bytes

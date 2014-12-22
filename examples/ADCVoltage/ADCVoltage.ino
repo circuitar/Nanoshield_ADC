@@ -1,9 +1,9 @@
 #include <Wire.h>
-#include <NanoShield_ADC.h>
+#include <Nanoshield_ADC.h>
 
 #define ADC_VREF 6.144
 
-NanoShield_ADC ads1115(0x48);
+Nanoshield_ADC ads1115(0x48);
 
 void setup(void) 
 {
