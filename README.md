@@ -7,6 +7,8 @@ The ADC Nanoshield offers a solution for applications that need analog to digita
 
 To install, just copy it under &lt;arduinosketchfolder&gt;/libraries/
 
+This library is based on the [Adafruit_ADS1X15](https://github.com/adafruit/Adafruit_ADS1X15) library from Adafruit.
+
 ---
 
 Copyright (c) 2014 Circuitar
