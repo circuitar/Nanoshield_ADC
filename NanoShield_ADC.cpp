@@ -1,15 +1,13 @@
 /*
-This is the Nanoshield ADC library to use ADC module
+This is the library to use the ADC Nanoshield.
 
 Copyright (c) 2014 Circuitar
- * 
 This software is released under the MIT license. See the attached LICENSE file for details.
 */
 
+#include "Nanoshield_ADC.h"
 
-#include "NanoShield_ADC.h"
-
-NanoShield_ADC::NanoShield_ADC(uint8_t i2cAddress)
+Nanoshield_ADC::Nanoshield_ADC(uint8_t i2cAddress)
 {
    m_i2cAddress = i2cAddress;
    m_conversionDelay = ADS1115_CONVERSIONDELAY;
@@ -17,23 +15,23 @@ NanoShield_ADC::NanoShield_ADC(uint8_t i2cAddress)
    m_gain = GAIN_TWOTHIRDS; /* +/- 6.144V range (limited to VDD +0.3V max!) */
 }
 
-void NanoShield_ADC::begin() {
+void Nanoshield_ADC::begin() {
   Wire.begin();
 }
 
-void NanoShield_ADC::setGain(Gain_t gain)
+void Nanoshield_ADC::setGain(Gain_t gain)
 {
   m_gain = gain;
 }
 
 
-Gain_t NanoShield_ADC::getGain()
+Gain_t Nanoshield_ADC::getGain()
 {
   return m_gain;
 }
 
 
-uint16_t NanoShield_ADC::readADC_SingleEnded(uint8_t channel) {
+uint16_t Nanoshield_ADC::readADC_SingleEnded(uint8_t channel) {
   if (channel > 3)
   {
     return 0;
@@ -79,7 +77,7 @@ uint16_t NanoShield_ADC::readADC_SingleEnded(uint8_t channel) {
 }
 
 
-int16_t NanoShield_ADC::readADC_Differential_0_1() {
+int16_t Nanoshield_ADC::readADC_Differential_0_1() {
   // Start with default values
   uint16_t config = ADS1015_REG_CONFIG_CQUE_NONE    | // Disable the comparator (default val)
                     ADS1015_REG_CONFIG_CLAT_NONLAT  | // Non-latching (default val)
@@ -123,7 +121,7 @@ int16_t NanoShield_ADC::readADC_Differential_0_1() {
 }
 
 
-int16_t NanoShield_ADC::readADC_Differential_2_3() {
+int16_t Nanoshield_ADC::readADC_Differential_2_3() {
   // Start with default values
   uint16_t config = ADS1015_REG_CONFIG_CQUE_NONE    | // Disable the comparator (default val)
                     ADS1015_REG_CONFIG_CLAT_NONLAT  | // Non-latching (default val)
@@ -167,7 +165,7 @@ int16_t NanoShield_ADC::readADC_Differential_2_3() {
 }
 
 
-void NanoShield_ADC::startComparator_SingleEnded(uint8_t channel, int16_t threshold)
+void Nanoshield_ADC::startComparator_SingleEnded(uint8_t channel, int16_t threshold)
 {
   // Start with default values
   uint16_t config = ADS1015_REG_CONFIG_CQUE_1CONV   | // Comparator enabled and asserts on 1 match
@@ -206,7 +204,7 @@ void NanoShield_ADC::startComparator_SingleEnded(uint8_t channel, int16_t thresh
   writeRegister(m_i2cAddress, ADS1015_REG_POINTER_CONFIG, config);
 }
 
-int16_t NanoShield_ADC::getLastConversionResults()
+int16_t Nanoshield_ADC::getLastConversionResults()
 {
   // Wait for the conversion to complete
   delay(m_conversionDelay);
@@ -230,7 +228,7 @@ int16_t NanoShield_ADC::getLastConversionResults()
   }
 }
 
-void NanoShield_ADC::writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value) {
+void Nanoshield_ADC::writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value) {
   Wire.beginTransmission(i2cAddress);
   #ifdef RASPBERRY
   char buf[3];
@@ -248,7 +246,7 @@ void NanoShield_ADC::writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t val
   
 }
 
-uint16_t NanoShield_ADC::readRegister(uint8_t i2cAddress, uint8_t reg) {
+uint16_t Nanoshield_ADC::readRegister(uint8_t i2cAddress, uint8_t reg) {
   
   Wire.beginTransmission(i2cAddress);
   Wire.write(ADS1015_REG_POINTER_CONVERT);

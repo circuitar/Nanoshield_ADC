@@ -1,7 +1,14 @@
-NanoShield ADC
-================
+Nanoshield_ADC
+==============
 
-* ADC Shield offers a solution for applications that need the conversion between analog-digital with a higher resolution or when the number of analog input of your MCU isn't enough.
-* 4 chanels and 16 bits
-* CI ADS1115
+This is the Arduino software library to access the ADC Nanoshield (ADS1x15 IC).
 
+The ADC Nanoshield offers a solution for applications that need analog to digital conversion with higher resolution or when the number of analog inputs of your MCU isn't enough.
+
+To install, just copy it under &lt;arduinosketchfolder&gt;/libraries/
+
+---
+
+Copyright (c) 2014 Circuitar
+
+This software is released under an MIT license. See the attached LICENSE file for details.

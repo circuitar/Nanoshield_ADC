@@ -1,23 +1,19 @@
 /*
-This is the Nanoshield ADC library to use ADC module
+This is the library to use the ADC Nanoshield.
 
 Copyright (c) 2014 Circuitar
- * 
 This software is released under the MIT license. See the attached LICENSE file for details.
 */
 
-#ifndef NanoShield_ADC_H
-#define NanoShield_ADC_H
+#ifndef NANOSHIELD_ADC_H
+#define NANOSHIELD_ADC_H
 
-#ifdef RASPBERRY
+#ifdef ARDUPI
     #include "arduPi.h"
-#endif
-#ifndef RASPBERRY
+#else
     #include "Arduino.h"
     #include <Wire.h>
 #endif
-
-
 
 /*=========================================================================
     I2C ADDRESS/BITS
@@ -110,17 +106,16 @@ typedef enum
   GAIN_SIXTEEN      = ADS1015_REG_CONFIG_PGA_0_256V
 } Gain_t;
 
-class NanoShield_ADC
+class Nanoshield_ADC
 {
 protected:
-   // Instance-specific properties
    uint8_t   m_i2cAddress;
    uint8_t   m_conversionDelay;
    uint8_t   m_bitShift;
    Gain_t m_gain;
 
  public:
-  NanoShield_ADC(uint8_t i2cAddress = ADS1115_ADDRESS);
+  Nanoshield_ADC(uint8_t i2cAddress = ADS1115_ADDRESS);
   void writeRegister(uint8_t , uint8_t , uint16_t );
   uint16_t readRegister(uint8_t , uint8_t );
   void begin(void);
