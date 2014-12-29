@@ -1,5 +1,6 @@
 # Datatypes (KEYWORD1)
-Nanoshield_ADC KEYWORD1
+Nanoshield_ADC12 KEYWORD1
+Nanoshield_ADC16 KEYWORD1
 
 # Methods and Functions (KEYWORD2)
 writeRegister KEYWORD2
