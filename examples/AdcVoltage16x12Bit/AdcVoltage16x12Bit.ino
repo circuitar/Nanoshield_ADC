@@ -1,5 +1,10 @@
 /**
  * Display the voltage measured at four 16-bit channels.
+ *
+ * Copyright (c) 2014 Circuitar
+ * All rights reserved.
+ *
+ * This software is released under a BSD license. See the attached LICENSE file for details.
  */
 #include <Wire.h>
 #include <Nanoshield_ADC.h>
