@@ -14,10 +14,11 @@ This software is released under a BSD license. See the attached LICENSE file for
 
 Nanoshield_ADC12::Nanoshield_ADC12(uint8_t i2cAddress)
 {
-   m_i2cAddress = i2cAddress;
-   m_conversionDelay = ADS1015_CONVERSIONDELAY;
-   m_bitShift = 4;
-   m_gain = GAIN_TWOTHIRDS; /* +/- 6.144V range (limited to VDD +0.3V max!) */
+  m_i2cAddress = i2cAddress;
+  m_conversionDelay = ADS1015_CONVERSIONDELAY;
+  m_bitShift = 4;
+  m_gain = GAIN_TWOTHIRDS; /* +/- 6.144V range (limited to VDD +0.3V max!) */
+  m_range = 6.144;
 }
 
 Nanoshield_ADC16::Nanoshield_ADC16(uint8_t i2cAddress)
@@ -26,6 +27,7 @@ Nanoshield_ADC16::Nanoshield_ADC16(uint8_t i2cAddress)
   m_conversionDelay = ADS1115_CONVERSIONDELAY;
   m_bitShift = 0;
   m_gain = GAIN_TWOTHIRDS; /* +/- 6.144V range (limited to VDD +0.3V max!) */
+  m_range = 6.144;
 }
 
 void Nanoshield_ADC12::begin() {
@@ -35,11 +37,22 @@ void Nanoshield_ADC12::begin() {
 void Nanoshield_ADC12::setGain(Gain_t gain)
 {
   m_gain = gain;
+  
+  if (gain) {
+    m_range = 4.096 / (1 << ((gain >> 9) - 1));
+  } else {
+    m_range = 6.144;
+  }
 }
 
 Gain_t Nanoshield_ADC12::getGain()
 {
   return m_gain;
+}
+
+float Nanoshield_ADC12::getRange()
+{
+  return m_range;
 }
 
 int16_t Nanoshield_ADC12::readADC_SingleEnded(uint8_t channel) {
@@ -251,12 +264,9 @@ void Nanoshield_ADC12::writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t v
   Wire.write((uint8_t)(value & 0xFF));
 #endif
   Wire.endTransmission();  
-
-  
 }
 
 uint16_t Nanoshield_ADC12::readRegister(uint8_t i2cAddress, uint8_t reg) {
-  
   Wire.beginTransmission(i2cAddress);
   Wire.write(ADS1015_REG_POINTER_CONVERT);
   Wire.endTransmission();
@@ -271,4 +281,32 @@ uint16_t Nanoshield_ADC12::readRegister(uint8_t i2cAddress, uint8_t reg) {
 #else
   return (Wire.read() << 8 | Wire.read());
 #endif
+}
+
+float Nanoshield_ADC12::readVoltage(uint8_t channel) {
+  return readADC_SingleEnded(channel) * m_range / 2047;
+}
+
+float Nanoshield_ADC12::readDifferentialVoltage01() {
+  return readADC_Differential_0_1() * m_range / 2047;
+}
+
+float Nanoshield_ADC12::readDifferentialVoltage23() {
+  return readADC_Differential_2_3() * m_range / 2047;
+}
+
+float Nanoshield_ADC12::read4to20mA(uint8_t channel) {
+  return 1000 * readVoltage(channel) / 100;
+}
+
+float Nanoshield_ADC16::readVoltage(uint8_t channel) {
+  return readADC_SingleEnded(channel) * m_range / 32767;
+}
+
+float Nanoshield_ADC16::readDifferentialVoltage01() {
+  return readADC_Differential_0_1() * m_range / 32767;
+}
+
+float Nanoshield_ADC16::readDifferentialVoltage23() {
+  return readADC_Differential_2_3() * m_range / 32767;
 }

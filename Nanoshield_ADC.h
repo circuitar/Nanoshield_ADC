@@ -116,6 +116,7 @@ class Nanoshield_ADC12 {
     uint8_t   m_conversionDelay;
     uint8_t   m_bitShift;
     Gain_t m_gain;
+    float m_range;
 
   public:
     Nanoshield_ADC12(uint8_t i2cAddress = ADS1X15_ADDRESS);
@@ -129,11 +130,19 @@ class Nanoshield_ADC12 {
     int16_t getLastConversionResults();
     void setGain(Gain_t);
     Gain_t getGain(void);
+    float getRange(void);
+    virtual float readVoltage(uint8_t);
+    float read4to20mA(uint8_t);
+    virtual float readDifferentialVoltage01();
+    virtual float readDifferentialVoltage23();
 };
 
 class Nanoshield_ADC16 : public Nanoshield_ADC12 {
   public:
     Nanoshield_ADC16(uint8_t i2cAddress = ADS1X15_ADDRESS);
+    virtual float readVoltage(uint8_t);
+    virtual float readDifferentialVoltage01();
+    virtual float readDifferentialVoltage23();
 };
 
 #endif

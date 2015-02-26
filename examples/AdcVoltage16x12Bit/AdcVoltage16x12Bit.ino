@@ -9,8 +9,6 @@
 #include <Wire.h>
 #include <Nanoshield_ADC.h>
 
-#define ADC_VREF 6.144
-
 Nanoshield_ADC12 adc[4] = { 0x48, 0x49, 0x4A, 0x4B };
 
 void setup()
@@ -32,15 +30,10 @@ void loop()
     Serial.print(" (");
     Serial.print(i/4);
     Serial.print(") voltage: ");
-    Serial.print(adc2volts(adc[i/4].readADC_SingleEnded(i%4), ADC_VREF));
+    Serial.print(adc[i/4].readVoltage(i%4));
     Serial.println("V");
   }
   Serial.println();
   
   delay(1000);
-}
-
-float adc2volts(float adc, float vref)
-{
-  return adc * vref / 2047;
 }
