@@ -27,13 +27,6 @@ I2C ADDRESS/BITS
 /*==========================================================================*/
 
 /*==========================================================================
-CONVERSION DELAY (in mS)
-----------------------------------------------------------------------------*/
-#define ADS1015_CONVERSIONDELAY         (1)
-#define ADS1115_CONVERSIONDELAY         (8)
-/*==========================================================================*/
-
-/*==========================================================================
 POINTER REGISTER
 ----------------------------------------------------------------------------*/
 #define ADS1015_REG_POINTER_MASK        (0x03)
@@ -82,6 +75,16 @@ CONFIG REGISTER
 #define ADS1015_REG_CONFIG_DR_2400SPS   (0x00A0)  // 2400 samples per second
 #define ADS1015_REG_CONFIG_DR_3300SPS   (0x00C0)  // 3300 samples per second
 
+#define ADS1115_REG_CONFIG_DR_MASK      (0x00E0)  
+#define ADS1115_REG_CONFIG_DR_8SPS      (0x0000)  // 8 samples per second
+#define ADS1115_REG_CONFIG_DR_16SPS     (0x0020)  // 16 samples per second
+#define ADS1115_REG_CONFIG_DR_32SPS     (0x0040)  // 32 samples per second
+#define ADS1115_REG_CONFIG_DR_64SPS     (0x0060)  // 64 samples per second
+#define ADS1115_REG_CONFIG_DR_128SPS    (0x0080)  // 128 samples per second (default)
+#define ADS1115_REG_CONFIG_DR_250SPS    (0x00A0)  // 250 samples per second
+#define ADS1115_REG_CONFIG_DR_475SPS    (0x00C0)  // 475 samples per second
+#define ADS1115_REG_CONFIG_DR_860SPS    (0x00E0)  // 860 samples per second
+
 #define ADS1015_REG_CONFIG_CMODE_MASK   (0x0010)
 #define ADS1015_REG_CONFIG_CMODE_TRAD   (0x0000)  // Traditional comparator with hysteresis (default)
 #define ADS1015_REG_CONFIG_CMODE_WINDOW (0x0010)  // Window comparator
@@ -112,25 +115,34 @@ typedef enum {
 
 class Nanoshield_ADC12 {
   protected:
-    uint8_t   m_i2cAddress;
-    uint8_t   m_conversionDelay;
-    uint8_t   m_bitShift;
+    uint8_t m_i2cAddress;
+    uint8_t m_bitShift;
     Gain_t m_gain;
     float m_range;
+    uint16_t m_spsMask;
+    uint32_t m_convStart;
+    bool m_continuous;
+    uint16_t getConfig();
 
   public:
     Nanoshield_ADC12(uint8_t i2cAddress = ADS1X15_ADDRESS);
     void writeRegister(uint8_t, uint8_t, uint16_t);
     uint16_t readRegister(uint8_t, uint8_t);
-    void begin(void);
+    void begin();
     int16_t readADC_SingleEnded(uint8_t);
-    int16_t readADC_Differential_0_1(void);
-    int16_t readADC_Differential_2_3(void);
-    void startComparator_SingleEnded(uint8_t, int16_t);
+    int16_t readADC_Differential_0_1();
+    int16_t readADC_Differential_2_3();
     int16_t getLastConversionResults();
+    void startComparator_SingleEnded(uint8_t, int16_t);
+    bool conversionDone();
+    int16_t readNext();
+    void setContinuous(bool c);
+    bool isContinuous();
     void setGain(Gain_t);
-    Gain_t getGain(void);
-    float getRange(void);
+    Gain_t getGain();
+    float getRange();
+    virtual void setSampleRate(uint16_t sps = 1600);
+    virtual uint16_t getSampleRate();
     virtual float readVoltage(uint8_t);
     float read4to20mA(uint8_t);
     virtual float readDifferentialVoltage01();
@@ -140,6 +152,8 @@ class Nanoshield_ADC12 {
 class Nanoshield_ADC16 : public Nanoshield_ADC12 {
   public:
     Nanoshield_ADC16(uint8_t i2cAddress = ADS1X15_ADDRESS);
+    virtual void setSampleRate(uint16_t sps = 128);
+    virtual uint16_t getSampleRate();
     virtual float readVoltage(uint8_t);
     virtual float readDifferentialVoltage01();
     virtual float readDifferentialVoltage23();

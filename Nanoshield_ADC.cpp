@@ -12,30 +12,43 @@ This software is released under a BSD license. See the attached LICENSE file for
 
 #include "Nanoshield_ADC.h"
 
-Nanoshield_ADC12::Nanoshield_ADC12(uint8_t i2cAddress)
-{
+Nanoshield_ADC12::Nanoshield_ADC12(uint8_t i2cAddress) {
   m_i2cAddress = i2cAddress;
-  m_conversionDelay = ADS1015_CONVERSIONDELAY;
   m_bitShift = 4;
   m_gain = GAIN_TWOTHIRDS; /* +/- 6.144V range (limited to VDD +0.3V max!) */
   m_range = 6.144;
+  m_spsMask = ADS1015_REG_CONFIG_DR_1600SPS;
+  m_convStart = 0;
+  m_continuous = false;
 }
 
-Nanoshield_ADC16::Nanoshield_ADC16(uint8_t i2cAddress)
-{
+Nanoshield_ADC16::Nanoshield_ADC16(uint8_t i2cAddress) {
   m_i2cAddress = i2cAddress;
-  m_conversionDelay = ADS1115_CONVERSIONDELAY;
   m_bitShift = 0;
   m_gain = GAIN_TWOTHIRDS; /* +/- 6.144V range (limited to VDD +0.3V max!) */
   m_range = 6.144;
+  m_spsMask = ADS1115_REG_CONFIG_DR_128SPS;
+  m_convStart = 0;
+  m_continuous = false;
 }
 
 void Nanoshield_ADC12::begin() {
   Wire.begin();
 }
 
-void Nanoshield_ADC12::setGain(Gain_t gain)
-{
+uint16_t Nanoshield_ADC12::getConfig() {
+  // Build default config
+  return ADS1015_REG_CONFIG_CQUE_NONE    | // Disable the comparator (default val)
+         ADS1015_REG_CONFIG_CLAT_NONLAT  | // Non-latching (default val)
+         ADS1015_REG_CONFIG_CPOL_ACTVLOW | // Alert/Rdy active low   (default val)
+         ADS1015_REG_CONFIG_CMODE_TRAD   | // Traditional comparator (default val)
+         m_spsMask                       | // Samples per second
+                                           // Mode: single shot or continuous
+         (m_continuous ? ADS1015_REG_CONFIG_MODE_CONTIN : ADS1015_REG_CONFIG_MODE_SINGLE) |
+         m_gain;                           // PGA/voltage range
+}
+
+void Nanoshield_ADC12::setGain(Gain_t gain) {
   m_gain = gain;
   
   if (gain) {
@@ -45,33 +58,107 @@ void Nanoshield_ADC12::setGain(Gain_t gain)
   }
 }
 
-Gain_t Nanoshield_ADC12::getGain()
-{
+Gain_t Nanoshield_ADC12::getGain() {
   return m_gain;
 }
 
-float Nanoshield_ADC12::getRange()
-{
+float Nanoshield_ADC12::getRange() {
   return m_range;
 }
 
+void Nanoshield_ADC12::setContinuous(bool c) {
+  m_continuous = c;
+}
+
+bool Nanoshield_ADC12::isContinuous() {
+  return m_continuous;
+}
+
+void Nanoshield_ADC12::setSampleRate(uint16_t sps) {
+  if (sps >= 3300) {
+    m_spsMask = ADS1015_REG_CONFIG_DR_3300SPS;
+  } else if (sps >= 2400) {
+    m_spsMask = ADS1015_REG_CONFIG_DR_2400SPS;
+  } else if (sps >= 1600) {
+    m_spsMask = ADS1015_REG_CONFIG_DR_1600SPS;
+  } else if (sps >= 920) {
+    m_spsMask = ADS1015_REG_CONFIG_DR_920SPS;
+  } else if (sps >= 490) {
+    m_spsMask = ADS1015_REG_CONFIG_DR_490SPS;
+  } else if (sps >= 250) {
+    m_spsMask = ADS1015_REG_CONFIG_DR_250SPS;
+  } else {
+    m_spsMask = ADS1015_REG_CONFIG_DR_128SPS;
+  }
+}
+
+uint16_t Nanoshield_ADC12::getSampleRate() {
+  switch (m_spsMask) {
+    case ADS1015_REG_CONFIG_DR_3300SPS:
+      return 3300;
+    case ADS1015_REG_CONFIG_DR_2400SPS:
+      return 2400;
+    case ADS1015_REG_CONFIG_DR_1600SPS:
+      return 1600;
+    case ADS1015_REG_CONFIG_DR_920SPS:
+      return 920;
+    case ADS1015_REG_CONFIG_DR_490SPS:
+      return 490;
+    case ADS1015_REG_CONFIG_DR_250SPS:
+      return 250;
+    default:
+      return 128;
+  }
+}
+
+void Nanoshield_ADC16::setSampleRate(uint16_t sps) {
+  if (sps >= 860) {
+    m_spsMask = ADS1115_REG_CONFIG_DR_860SPS;
+  } else if (sps >= 475) {
+    m_spsMask = ADS1115_REG_CONFIG_DR_475SPS;
+  } else if (sps >= 250) {
+    m_spsMask = ADS1115_REG_CONFIG_DR_250SPS;
+  } else if (sps >= 128) {
+    m_spsMask = ADS1115_REG_CONFIG_DR_128SPS;
+  } else if (sps >= 64) {
+    m_spsMask = ADS1115_REG_CONFIG_DR_64SPS;
+  } else if (sps >= 32) {
+    m_spsMask = ADS1115_REG_CONFIG_DR_32SPS;
+  } else if (sps >= 16) {
+    m_spsMask = ADS1115_REG_CONFIG_DR_16SPS;
+  } else {
+    m_spsMask = ADS1115_REG_CONFIG_DR_8SPS;
+  }
+}
+
+uint16_t Nanoshield_ADC16::getSampleRate() {
+  switch (m_spsMask) {
+    case ADS1115_REG_CONFIG_DR_860SPS:
+      return 860;
+    case ADS1115_REG_CONFIG_DR_475SPS:
+      return 475;
+    case ADS1115_REG_CONFIG_DR_250SPS:
+      return 250;
+    case ADS1115_REG_CONFIG_DR_128SPS:
+      return 128;
+    case ADS1115_REG_CONFIG_DR_64SPS:
+      return 64;
+    case ADS1115_REG_CONFIG_DR_32SPS:
+      return 32;
+    case ADS1115_REG_CONFIG_DR_16SPS:
+      return 16;
+    default:
+      return 8;
+  }
+}
+
 int16_t Nanoshield_ADC12::readADC_SingleEnded(uint8_t channel) {
-  if (channel > 3)
-  {
+  uint16_t config = getConfig();
+
+  if (channel > 3) {
     return 0;
   }
   
-  // Start with default values
-  uint16_t config = ADS1015_REG_CONFIG_CQUE_NONE    | // Disable the comparator (default val)
-                    ADS1015_REG_CONFIG_CLAT_NONLAT  | // Non-latching (default val)
-                    ADS1015_REG_CONFIG_CPOL_ACTVLOW | // Alert/Rdy active low   (default val)
-                    ADS1015_REG_CONFIG_CMODE_TRAD   | // Traditional comparator (default val)
-                    ADS1015_REG_CONFIG_DR_1600SPS   | // 1600 samples per second (default)
-                    ADS1015_REG_CONFIG_MODE_SINGLE;   // Single-shot mode (default)
-
-  // Set PGA/voltage range
-  config |= m_gain;
-
   // Set single-ended input channel
   switch (channel)
   {
@@ -91,26 +178,19 @@ int16_t Nanoshield_ADC12::readADC_SingleEnded(uint8_t channel) {
 
   // Set 'start single-conversion' bit
   config |= ADS1015_REG_CONFIG_OS_SINGLE;
+
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1015_REG_POINTER_CONFIG, config);
-  // Wait for the conversion to complete
-  delay(m_conversionDelay);
-  // Read the conversion results
-  // Shift 12-bit results right 4 bits for the ADS1015
-  return readRegister(m_i2cAddress, ADS1015_REG_POINTER_CONVERT) >> m_bitShift; 
+  
+  // Mark the time when the conversion started
+  m_convStart = micros();
+  
+  // If in continuous mode, return immediately, otherwise wait for conversion
+  return m_continuous ? 0 : readNext();
 }
 
 int16_t Nanoshield_ADC12::readADC_Differential_0_1() {
-  // Start with default values
-  uint16_t config = ADS1015_REG_CONFIG_CQUE_NONE    | // Disable the comparator (default val)
-                    ADS1015_REG_CONFIG_CLAT_NONLAT  | // Non-latching (default val)
-                    ADS1015_REG_CONFIG_CPOL_ACTVLOW | // Alert/Rdy active low   (default val)
-                    ADS1015_REG_CONFIG_CMODE_TRAD   | // Traditional comparator (default val)
-                    ADS1015_REG_CONFIG_DR_1600SPS   | // 1600 samples per second (default)
-                    ADS1015_REG_CONFIG_MODE_SINGLE;   // Single-shot mode (default)
-
-  // Set PGA/voltage range
-  config |= m_gain;
+  uint16_t config = getConfig();
                     
   // Set channels
   config |= ADS1015_REG_CONFIG_MUX_DIFF_0_1;          // AIN0 = P, AIN1 = N
@@ -121,40 +201,16 @@ int16_t Nanoshield_ADC12::readADC_Differential_0_1() {
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1015_REG_POINTER_CONFIG, config);
 
-  // Wait for the conversion to complete
-  delay(m_conversionDelay);
-
-  // Read the conversion results
-  uint16_t res = readRegister(m_i2cAddress, ADS1015_REG_POINTER_CONVERT) >> m_bitShift;
-  if (m_bitShift == 0)
-  {
-    return (int16_t)res;
-  }
-  else
-  {
-    // Shift 12-bit results right 4 bits for the ADS1015,
-    // making sure we keep the sign bit intact
-    if (res > 0x07FF)
-    {
-      // negative number - extend the sign to 16th bit
-      res |= 0xF000;
-    }
-    return (int16_t)res;
-  }
+  // Mark the time when the conversion started
+  m_convStart = micros();
+  
+  // If in continuous mode, return immediately, otherwise wait for conversion
+  return m_continuous ? 0 : readNext();
 }
 
 
 int16_t Nanoshield_ADC12::readADC_Differential_2_3() {
-  // Start with default values
-  uint16_t config = ADS1015_REG_CONFIG_CQUE_NONE    | // Disable the comparator (default val)
-                    ADS1015_REG_CONFIG_CLAT_NONLAT  | // Non-latching (default val)
-                    ADS1015_REG_CONFIG_CPOL_ACTVLOW | // Alert/Rdy active low   (default val)
-                    ADS1015_REG_CONFIG_CMODE_TRAD   | // Traditional comparator (default val)
-                    ADS1015_REG_CONFIG_DR_1600SPS   | // 1600 samples per second (default)
-                    ADS1015_REG_CONFIG_MODE_SINGLE;   // Single-shot mode (default)
-
-  // Set PGA/voltage range
-  config |= m_gain;
+  uint16_t config = getConfig();
 
   // Set channels
   config |= ADS1015_REG_CONFIG_MUX_DIFF_2_3;          // AIN2 = P, AIN3 = N
@@ -164,42 +220,19 @@ int16_t Nanoshield_ADC12::readADC_Differential_2_3() {
 
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1015_REG_POINTER_CONFIG, config);
+  
+  // Mark the time when the conversion started
+  m_convStart = micros();
 
-  // Wait for the conversion to complete
-  delay(m_conversionDelay);
-
-  // Read the conversion results
-  uint16_t res = readRegister(m_i2cAddress, ADS1015_REG_POINTER_CONVERT) >> m_bitShift;
-  if (m_bitShift == 0)
-  {
-    return (int16_t)res;
-  }
-  else
-  {
-    // Shift 12-bit results right 4 bits for the ADS1015,
-    // making sure we keep the sign bit intact
-    if (res > 0x07FF)
-    {
-      // negative number - extend the sign to 16th bit
-      res |= 0xF000;
-    }
-    return (int16_t)res;
-  }
+  // If in continuous mode, return immediately, otherwise wait for conversion
+  return m_continuous ? 0 : readNext();
 }
 
-void Nanoshield_ADC12::startComparator_SingleEnded(uint8_t channel, int16_t threshold)
-{
-  // Start with default values
-  uint16_t config = ADS1015_REG_CONFIG_CQUE_1CONV   | // Comparator enabled and asserts on 1 match
-                    ADS1015_REG_CONFIG_CLAT_LATCH   | // Latching mode
-                    ADS1015_REG_CONFIG_CPOL_ACTVLOW | // Alert/Rdy active low   (default val)
-                    ADS1015_REG_CONFIG_CMODE_TRAD   | // Traditional comparator (default val)
-                    ADS1015_REG_CONFIG_DR_1600SPS   | // 1600 samples per second (default)
-                    ADS1015_REG_CONFIG_MODE_CONTIN  | // Continuous conversion mode
-                    ADS1015_REG_CONFIG_MODE_CONTIN;   // Continuous conversion mode
+void Nanoshield_ADC12::startComparator_SingleEnded(uint8_t channel, int16_t threshold) {
+  // Comparator must be used in continuous mode
+  m_continuous = true;
 
-  // Set PGA/voltage range
-  config |= m_gain;
+  uint16_t config = getConfig();
                     
   // Set single-ended input channel
   switch (channel)
@@ -224,12 +257,21 @@ void Nanoshield_ADC12::startComparator_SingleEnded(uint8_t channel, int16_t thre
 
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1015_REG_POINTER_CONFIG, config);
+
+  // Mark the time when the conversion started
+  m_convStart = micros();
 }
 
-int16_t Nanoshield_ADC12::getLastConversionResults()
-{
-  // Wait for the conversion to complete
-  delay(m_conversionDelay);
+int16_t Nanoshield_ADC12::getLastConversionResults() {
+  return readNext();
+}
+
+int16_t Nanoshield_ADC12::readNext() {
+  // Wait until end of conversion
+  while (!conversionDone());
+
+  // Mark the time when the conversion started
+  m_convStart = micros();
 
   // Read the conversion results
   uint16_t res = readRegister(m_i2cAddress, ADS1015_REG_POINTER_CONVERT) >> m_bitShift;
@@ -248,6 +290,10 @@ int16_t Nanoshield_ADC12::getLastConversionResults()
     }
     return (int16_t)res;
   }
+}
+
+bool Nanoshield_ADC12::conversionDone() {
+  return micros() - m_convStart >= 1000000L / getSampleRate();
 }
 
 void Nanoshield_ADC12::writeRegister(uint8_t i2cAddress, uint8_t reg, uint16_t value) {
@@ -284,29 +330,29 @@ uint16_t Nanoshield_ADC12::readRegister(uint8_t i2cAddress, uint8_t reg) {
 }
 
 float Nanoshield_ADC12::readVoltage(uint8_t channel) {
-  return readADC_SingleEnded(channel) * m_range / 2047;
+  return (m_continuous ? readNext() : readADC_SingleEnded(channel)) * m_range / 2047;
 }
 
 float Nanoshield_ADC12::readDifferentialVoltage01() {
-  return readADC_Differential_0_1() * m_range / 2047;
+  return (m_continuous ? readNext() : readADC_Differential_0_1()) * m_range / 2047;
 }
 
 float Nanoshield_ADC12::readDifferentialVoltage23() {
-  return readADC_Differential_2_3() * m_range / 2047;
+  return (m_continuous ? readNext() : readADC_Differential_2_3()) * m_range / 2047;
 }
 
 float Nanoshield_ADC12::read4to20mA(uint8_t channel) {
-  return 1000 * readVoltage(channel) / 100;
+  return (m_continuous ? readNext() : 1000 * readVoltage(channel)) / 100;
 }
 
 float Nanoshield_ADC16::readVoltage(uint8_t channel) {
-  return readADC_SingleEnded(channel) * m_range / 32767;
+  return (m_continuous ? readNext() : readADC_SingleEnded(channel)) * m_range / 32767;
 }
 
 float Nanoshield_ADC16::readDifferentialVoltage01() {
-  return readADC_Differential_0_1() * m_range / 32767;
+  return (m_continuous ? readNext() : readADC_Differential_0_1()) * m_range / 32767;
 }
 
 float Nanoshield_ADC16::readDifferentialVoltage23() {
-  return readADC_Differential_2_3() * m_range / 32767;
+  return (m_continuous ? readNext() : readADC_Differential_2_3()) * m_range / 32767;
 }
