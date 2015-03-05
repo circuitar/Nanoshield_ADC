@@ -19,6 +19,7 @@ The following examples are provided:
 - **Voltage16Ch12Bit**: using multiple boards. Read sixteen voltages across four units of the 12-bit ADC Nanoshield. Make sure that the solder jumpers for the I2C address are properly configured to support this example.
 - **DifferentialVoltage**: read a differential voltage between inputs 2 (+) and 3 (-). The channels can be easily changed to 0 (+) and 1 (-).
 - **Read4to20mA**: how to read data from industrial 4-20mA sensors (or 4-20mA "transmistters"). Make sure that ADC Nanoshield being used is factory configured for this type of operation.
+- **ContinuousMode**: read data in continuous mode to achieve high sample rates.
 
 Most examples are provided for the 16-bit version of the ADC Nanoshield, but can be easily modified to support the 12-bit version by changing the type of the `adc` variable from `Nanoshield_ADC16` to `Nanoshield_ADC12`.
 
