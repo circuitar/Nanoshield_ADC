@@ -27,14 +27,14 @@ void setup()
   // If not one of the above, the closest lower value will be selected.
   adc.setSampleRate(860);
   
-  // Enter continuous mode reading channel 0 (input A0)
+  // Enter continuous mode and start reading channel 0 (input A0)
   adc.setContinuous(true);
   adc.readADC_SingleEnded(channel);
   
   Serial.print("Configured sample rate: ");
   Serial.print(adc.getSampleRate());
   Serial.println(" SPS");
-  Serial.println("The actual sample rate will be lower because of I2C communication time");
+  Serial.println("The actual sample rate will be lower because of I2C communications");
 }
 
 void loop()
@@ -43,11 +43,11 @@ void loop()
   unsigned long sum = 0;       // ADC value sum
   unsigned long t0 = millis(); // Sampling start time
 
-  // Sample continuously during one second
+  // Sample continuously for one second
   while (millis() - t0 < 1000) {
-    // Wait for conversion. This is optional as adc.readNext() already does
-    //   it, but it can be used in a non-blocking way to check the ADC status
-    //   periodically and do something else the conversion is being done.
+    // Wait for conversion. This is optional, as adc.readNext() already does
+    //   it, but it can be used to check the ADC status periodically in a non-
+    //   blocking way and do something else while the conversion is being done.
     while (!adc.conversionDone());
     
     // Read ADC value
