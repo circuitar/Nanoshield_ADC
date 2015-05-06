@@ -120,9 +120,10 @@ class Nanoshield_ADC12 {
     Gain_t m_gain;
     float m_range;
     uint16_t m_spsMask;
-    uint32_t m_convStart;
+    uint32_t m_nextReadingTime;
     bool m_continuous;
     uint16_t getConfig();
+    uint32_t getNextReadingTime();
 
   public:
     Nanoshield_ADC12(uint8_t i2cAddress = ADS1X15_ADDRESS);
