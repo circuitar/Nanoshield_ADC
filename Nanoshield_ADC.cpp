@@ -11,7 +11,12 @@ This software is released under a BSD license. See the attached LICENSE file for
 */
 
 #include "Nanoshield_ADC.h"
+
+#ifndef __AVR__
+#define TWI_FREQ 100000
+#else
 #include "utility/twi.h"
+#endif
 
 // Time it takes to write a register in the I2C bus, in microseconds
 //  2 x 4 bytes x 9 bits x bit time
