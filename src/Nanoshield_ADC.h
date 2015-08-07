@@ -1,14 +1,16 @@
-/*
-This is the library to use the ADC Nanoshield.
-
-This library is based on the Adafruit_ADS1X15 library from Adafruit (https://github.com/adafruit/Adafruit_ADS1X15).
-
-Original work Copyright (c) 2012, Adafruit Industries
-Modified work Copyright (c) 2014 Circuitar
-All rights reserved.
-
-This software is released under a BSD license. See the attached LICENSE file for details.
-*/
+/**
+ * @file Nanoshield_ADC.h
+ * 
+ * This is the library to use the ADC Nanoshield.
+ * 
+ * This library is based on the Adafruit_ADS1X15 library from Adafruit (https://github.com/adafruit/Adafruit_ADS1X15).
+ * 
+ * Original work Copyright (c) 2012, Adafruit Industries
+ * Modified work Copyright (c) 2014 Circuitar
+ * All rights reserved.
+ * 
+ * This software is released under a BSD license. See the attached LICENSE file for details.
+ */
 
 #ifndef NANOSHIELD_ADC_H
 #define NANOSHIELD_ADC_H
@@ -104,13 +106,20 @@ CONFIG REGISTER
 #define ADS1015_REG_CONFIG_CQUE_NONE    (0x0003)  // Disable the comparator and put ALERT/RDY in high state (default)
 /*==========================================================================*/
 
+/**
+ * Possible gain values.
+ * 
+ * Tensions over the gain limit will saturate the conversion (i.e. converted 
+ * value will be the same of the gain limit).
+ * Never use input tensions greater than 5V.
+ */
 typedef enum {
-  GAIN_TWOTHIRDS    = ADS1015_REG_CONFIG_PGA_6_144V,
-  GAIN_ONE          = ADS1015_REG_CONFIG_PGA_4_096V,
-  GAIN_TWO          = ADS1015_REG_CONFIG_PGA_2_048V,
-  GAIN_FOUR         = ADS1015_REG_CONFIG_PGA_1_024V,
-  GAIN_EIGHT        = ADS1015_REG_CONFIG_PGA_0_512V,
-  GAIN_SIXTEEN      = ADS1015_REG_CONFIG_PGA_0_256V
+  GAIN_TWOTHIRDS    = ADS1015_REG_CONFIG_PGA_6_144V, /// Reads tensions up to 6.144V.
+  GAIN_ONE          = ADS1015_REG_CONFIG_PGA_4_096V, /// Reads tensions up to 4.096V.
+  GAIN_TWO          = ADS1015_REG_CONFIG_PGA_2_048V, /// Reads tensions up to 2.048V.
+  GAIN_FOUR         = ADS1015_REG_CONFIG_PGA_1_024V, /// Reads tensions up to 1.024V.
+  GAIN_EIGHT        = ADS1015_REG_CONFIG_PGA_0_512V, /// Reads tensions up to 0.512V.
+  GAIN_SIXTEEN      = ADS1015_REG_CONFIG_PGA_0_256V  /// Reads tensions up to 0.256V.
 } Gain_t;
 
 class Nanoshield_ADC12 {
@@ -126,27 +135,224 @@ class Nanoshield_ADC12 {
     uint32_t getNextReadingTime();
 
   public:
+
+    /**
+     * @brief Constructor
+     * 
+     * Instantiates an object to control the Nanoshield_ADC12 (12 bits 
+     * resolution) converter. If using the 16 bits version, use
+     * Nanoshield_ADC16
+     * 
+     * @param i2cAddress The nanoshield I2C address on the bus.
+     * 
+     * @see Nanoshield_ADC16
+     */
     Nanoshield_ADC12(uint8_t i2cAddress = ADS1X15_ADDRESS);
+
+    /**
+     * @brief Writes to Nanoshield ADC config register.
+     * 
+     * @param i2cAddress I2C address of the Nanoshield ADC.
+     * @param reg Config register address to write.
+     * @param value Value to write.
+     */
     void writeRegister(uint8_t, uint8_t, uint16_t);
+
+    /**
+     * @brief Read a Nanoshield ADC register.
+     * 
+     * @param i2cAddress I2C address of the Nanoshield ADC.
+     * @param reg Register address to read.
+     * 
+     * @return The value of the addressed register.
+     */
     uint16_t readRegister(uint8_t, uint8_t);
+
+    /**
+     * @brief Initializes the module.
+     */
     void begin();
+
+    /**
+     * @brief Reads channel binary voltage.
+     * 
+     * @param  channel Channel to read. Must be in 0, 1, 2 or 3.
+     * @return Binary representation of the voltage in the channel.
+     */
     int16_t readADC_SingleEnded(uint8_t);
+
+    /**
+     * @brief Reads differential voltage in binary mode between channels 0(+) 
+     *        and 1(-).
+     * 
+     * Reads 16 or 12 bits representation of the difference between the voltage
+     * in channels 0(+) and 1(-).
+     * 
+     * @return Binary representation of the differential voltage.
+     */
     int16_t readADC_Differential_0_1();
+
+    /**
+     * @brief Reads differential voltage in binary mode between channels 2(+) 
+     *        and 3(-).
+     * 
+     * Reads 16 or 12 bits representation of the difference between the voltage
+     * in channels 2(+) and 3(-).
+     * 
+     * @return Binary representation of the differential voltage.
+     */
     int16_t readADC_Differential_2_3();
+
+    /**
+     * @brief Reads the binary voltage requested when it is ready.
+     * 
+     * To use when in continuous mode.
+     * 
+     * @return The binary voltage representation.
+     */
     int16_t getLastConversionResults();
+
+    /**
+     * @brief Sets the high threshold value to comparator mode.
+     * 
+     * The ADS1115 has a interrupt signal connected to arduino ALERT/RDY pin
+     * (D3) to notify tensions over a high threshold. To use this feature, the
+     * alert jumper on arduino must be closed and a interrupt handler must be
+     * set with attachinterrupt(6, <interruptHandler>, LOW), where 
+     * <interruptHandler> is the function to be called on interrupt signal.
+     * 
+     * @param channel The channel to keep track of value. Must be in 0, 1, 2 or 3.
+     * @param threshold The high threshold to trigger a interruption.
+     */
     void startComparator_SingleEnded(uint8_t, int16_t);
+
+    /**
+     * @brief Checks if there is data available to read.
+     * 
+     * @return True if no conversion is being done and the value is ready to be
+     *         read. Otherwise, false.
+     */
     bool conversionDone();
+
+    /**
+     * @brief Reads the binary voltage requested when it is ready.
+     * 
+     * To use when in continuous mode.
+     * 
+     * @return The binary voltage representation.
+     */
     int16_t readNext();
+
+    /**
+     * @brief Sets the library to work on continuous mode.
+     * 
+     * In continuous mode, the library will reads the tension value based on a
+     * sample rate. For example, if reading at 860Hz, then 860 measures will be
+     * done in a second.
+     * 
+     * @param c True to activate continuous mode, false to deactivate 
+     *          continuous mode.
+     * 
+     * @see setSampleRate()
+     * @see getSampleRate()
+     * @see readNext()
+     * @see conversionDone()
+     */
     void setContinuous(bool c);
+
+    /**
+     * @brief Checks if in continuous mode.
+     * 
+     * @return Ture if in continuous mode, false if not.
+     */
     bool isContinuous();
+
+    /**
+     * @brief Sets the input gain.
+     * 
+     * The input gain is used to adjust the converter resolution to the signal
+     * magnitude. Greater gains adjusts lower tensions over the resolution.
+     * 
+     * @param gain A available gain from the Gain_t enumerator.
+     * 
+     * @see Gain_t
+     */
     void setGain(Gain_t);
+
+    /**
+     * @brief Gets the gain set on the Nanoshield ADC.
+     * 
+     * @return A value from Gain_t enumerator.
+     * 
+     * @see Gain_t
+     * @see setGain()
+     */
     Gain_t getGain();
+
+    /**
+     * @brief [brief description]
+     * @details [long description]
+     * @return [description]
+     */
     float getRange();
+
+    /**
+     * @brief Sets the conversor sample rate on continuous mode
+     * 
+     * @param sps Sample rate. Possible values are:
+     *            - If using Nanoshield_ADC12 (12 bits): 128, 250, 490, 920, 1600, 2400, 3300
+     *            - If using Nanoshield_ADC16 (16 bits): 8, 16, 32, 64, 128, 250, 475, 860
+     *            If no one of the above, the closest lower value will be selected.
+     *            
+     * @see setContiuous()
+     */
     virtual void setSampleRate(uint16_t sps = 1600);
+
+    /**
+     * @brief Gets actual Nanoshield_ADC sample rate.
+     *
+     * @return Actual sample rate set.
+     */
     virtual uint16_t getSampleRate();
+
+    /**
+     * @brief Reads channel voltage.
+     * 
+     * @param  channel Channel to read. Must be in 0, 1, 2 or 3.
+     * @return The voltage read up to 5V.
+     */
     virtual float readVoltage(uint8_t);
+
+    /**
+     * @brief Reads channel current from 4mA to 20mA.
+     * 
+     * @param  channel Channel to read. Must be in 0, 1, 2 or 3.
+     * @return The current on channel from 4mA to 20mA.
+     */
     float read4to20mA(uint8_t);
+
+    /**
+     * @brief Reads voltage in differential mode between channels 0(+) and 1(-).
+     * 
+     * Reads the difference between voltages in channel 0(+) and 1(-). For
+     * example, if the voltage in both channels is the same, then the 
+     * differential voltage is zero. Notice that the voltage margin in channels
+     * still 0V to 5V in relation to GND.
+     * 
+     * @return The difference between the voltages in channel 0(+) and 1(-).
+     */
     virtual float readDifferentialVoltage01();
+
+    /**
+     * @brief Reads voltage in differential mode between channels 2(+) and 3(-).
+     * 
+     * Reads the difference between voltages in channel 2(+) and 3(-). For
+     * example, if the voltage in both channels is the same, then the 
+     * differential voltage is zero. Notice that the voltage margin in channels
+     * still 0V to 5V in relation to GND.
+     * 
+     * @return The difference between the voltages in channel 2(+) and 3(-).
+     */
     virtual float readDifferentialVoltage23();
 };
 

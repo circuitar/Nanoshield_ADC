@@ -1,14 +1,16 @@
-/*
-This is the library to use the ADC Nanoshield.
-
-This library is based on the Adafruit_ADS1X15 library from Adafruit (https://github.com/adafruit/Adafruit_ADS1X15).
-
-Original work Copyright (c) 2012, Adafruit Industries
-Modified work Copyright (c) 2014 Circuitar
-All rights reserved.
-
-This software is released under a BSD license. See the attached LICENSE file for details.
-*/
+/**
+ * @file Nanoshield_ADC.cpp
+ * 
+ * This is the library to use the ADC Nanoshield.
+ * 
+ * This library is based on the Adafruit_ADS1X15 library from Adafruit (https://github.com/adafruit/Adafruit_ADS1X15).
+ * 
+ * Original work Copyright (c) 2012, Adafruit Industries
+ * Modified work Copyright (c) 2014 Circuitar
+ * All rights reserved.
+ * 
+ * This software is released under a BSD license. See the attached LICENSE file for details.
+ */
 
 #include "Nanoshield_ADC.h"
 
