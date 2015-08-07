@@ -358,11 +358,69 @@ class Nanoshield_ADC12 {
 
 class Nanoshield_ADC16 : public Nanoshield_ADC12 {
   public:
+
+    /**
+     * @brief Constructor
+     * 
+     * Instantiates an object to control the Nanoshield_ADC16 (16 bits 
+     * resolution) converter. If using the 12 bits version, use
+     * Nanoshield_ADC12
+     * 
+     * @param i2cAddress The nanoshield I2C address on the bus.
+     * 
+     * @see Nanoshield_ADC12
+     */
     Nanoshield_ADC16(uint8_t i2cAddress = ADS1X15_ADDRESS);
+
+    /**
+     * @brief Sets the conversor sample rate on continuous mode
+     * 
+     * @param sps Sample rate. Possible values are:
+     *            - If using Nanoshield_ADC12 (12 bits): 128, 250, 490, 920, 1600, 2400, 3300
+     *            - If using Nanoshield_ADC16 (16 bits): 8, 16, 32, 64, 128, 250, 475, 860
+     *            If no one of the above, the closest lower value will be selected.
+     *            
+     * @see setContiuous()
+     */
     virtual void setSampleRate(uint16_t sps = 128);
+
+    /**
+     * @brief Gets actual Nanoshield_ADC sample rate.
+     *
+     * @return Actual sample rate set.
+     */
     virtual uint16_t getSampleRate();
+
+    /**
+     * @brief Reads channel voltage.
+     * 
+     * @param  channel Channel to read. Must be in 0, 1, 2 or 3.
+     * @return The voltage read up to 5V.
+     */
     virtual float readVoltage(uint8_t);
+
+    /**
+     * @brief Reads voltage in differential mode between channels 0(+) and 1(-).
+     * 
+     * Reads the difference between voltages in channel 0(+) and 1(-). For
+     * example, if the voltage in both channels is the same, then the 
+     * differential voltage is zero. Notice that the voltage margin in channels
+     * still 0V to 5V in relation to GND.
+     * 
+     * @return The difference between the voltages in channel 0(+) and 1(-).
+     */
     virtual float readDifferentialVoltage01();
+
+    /**
+     * @brief Reads voltage in differential mode between channels 2(+) and 3(-).
+     * 
+     * Reads the difference between voltages in channel 2(+) and 3(-). For
+     * example, if the voltage in both channels is the same, then the 
+     * differential voltage is zero. Notice that the voltage margin in channels
+     * still 0V to 5V in relation to GND.
+     * 
+     * @return The difference between the voltages in channel 2(+) and 3(-).
+     */
     virtual float readDifferentialVoltage23();
 };
 
