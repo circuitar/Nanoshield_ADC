@@ -122,6 +122,7 @@ class Nanoshield_ADC12 {
     uint16_t m_spsMask;
     uint32_t m_nextReadingTime;
     bool m_continuous;
+    bool m_comparator;
     uint16_t getConfig();
     uint32_t getNextReadingTime();
 
@@ -134,7 +135,10 @@ class Nanoshield_ADC12 {
     int16_t readADC_Differential_0_1();
     int16_t readADC_Differential_2_3();
     int16_t getLastConversionResults();
-    void startComparator_SingleEnded(uint8_t, int16_t);
+    void setComparator(uint8_t channel, int16_t highThreshold, int16_t lowThreshold);
+    void setNotComparator();
+    bool isComparator();
+    void startComparator_SingleEnded(uint8_t, int16_t, int16_t);
     bool conversionDone();
     int16_t readNext();
     void setContinuous(bool c);
