@@ -131,6 +131,7 @@ class Nanoshield_ADC12 {
     uint16_t m_spsMask;
     uint32_t m_nextReadingTime;
     bool m_continuous;
+    bool m_comparator;
     uint16_t getConfig();
     uint32_t getNextReadingTime();
 
@@ -213,6 +214,37 @@ class Nanoshield_ADC12 {
     int16_t getLastConversionResults();
 
     /**
+     * @brief Sets the Nanoshield ADC in comparator mode.
+     * 
+     * In comparator mode, the Nanoshield sets the ALERT/RDY pin to LOW
+     * when the voltage read exceed a high threshold. This pin is set to HIGH
+     * again when the voltage read falls below a low threshold. The ALERT/RDY
+     * pin is connected to arduino D3 pin.
+     * 
+     * @param channel The channel to compare.
+     * @param highThreshold The high threshold.
+     * @param lowThreshold The low threshold.
+     */
+    void setComparator(uint8_t, int16_t, int16_t);
+
+    /**
+     * @brief Turns comparator mode off.
+     * 
+     * Note that comparator mode needs the continuous mode. So when comparator
+     * mode is unset, continuous mode still set. Unset continuous mode too if
+     * necessary.
+     * 
+     * @see setContinuous()
+     */
+    void setNotComparator();
+
+    /**
+     * @brief Checks if in comparator mode.
+     * @return True if comparator mode is active. False if not.
+     */
+    bool isComparator();
+
+    /**
      * @brief Sets the high threshold value to comparator mode.
      * 
      * The ADS1115 has a interrupt signal connected to arduino ALERT/RDY pin
@@ -222,9 +254,10 @@ class Nanoshield_ADC12 {
      * <interruptHandler> is the function to be called on interrupt signal.
      * 
      * @param channel The channel to keep track of value. Must be in 0, 1, 2 or 3.
-     * @param threshold The high threshold to trigger a interruption.
+     * @param highThreshold The high threshold set ALERT/RDY pin LOW.
+     * @param lowThreshold The low threshold to set ALERT/RDY pin HIGH.
      */
-    void startComparator_SingleEnded(uint8_t, int16_t);
+    void startComparator_SingleEnded(uint8_t, int16_t, int16_t);
 
     /**
      * @brief Checks if there is data available to read.
