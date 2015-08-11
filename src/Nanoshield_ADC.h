@@ -109,17 +109,17 @@ CONFIG REGISTER
 /**
  * Possible gain values.
  * 
- * Tensions over the gain limit will saturate the conversion (i.e. converted 
+ * Voltages over the gain limit will saturate the conversion (i.e. converted 
  * value will be the same of the gain limit).
- * Never use input tensions greater than 5V.
+ * Never use input voltages greater than 5V.
  */
 typedef enum {
-  GAIN_TWOTHIRDS    = ADS1015_REG_CONFIG_PGA_6_144V, /// Reads tensions up to 6.144V.
-  GAIN_ONE          = ADS1015_REG_CONFIG_PGA_4_096V, /// Reads tensions up to 4.096V.
-  GAIN_TWO          = ADS1015_REG_CONFIG_PGA_2_048V, /// Reads tensions up to 2.048V.
-  GAIN_FOUR         = ADS1015_REG_CONFIG_PGA_1_024V, /// Reads tensions up to 1.024V.
-  GAIN_EIGHT        = ADS1015_REG_CONFIG_PGA_0_512V, /// Reads tensions up to 0.512V.
-  GAIN_SIXTEEN      = ADS1015_REG_CONFIG_PGA_0_256V  /// Reads tensions up to 0.256V.
+  GAIN_TWOTHIRDS    = ADS1015_REG_CONFIG_PGA_6_144V, /// Reads voltages up to 6.144V.
+  GAIN_ONE          = ADS1015_REG_CONFIG_PGA_4_096V, /// Reads voltages up to 4.096V.
+  GAIN_TWO          = ADS1015_REG_CONFIG_PGA_2_048V, /// Reads voltages up to 2.048V.
+  GAIN_FOUR         = ADS1015_REG_CONFIG_PGA_1_024V, /// Reads voltages up to 1.024V.
+  GAIN_EIGHT        = ADS1015_REG_CONFIG_PGA_0_512V, /// Reads voltages up to 0.512V.
+  GAIN_SIXTEEN      = ADS1015_REG_CONFIG_PGA_0_256V  /// Reads voltages up to 0.256V.
 } Gain_t;
 
 class Nanoshield_ADC12 {
@@ -216,7 +216,7 @@ class Nanoshield_ADC12 {
      * @brief Sets the high threshold value to comparator mode.
      * 
      * The ADS1115 has a interrupt signal connected to arduino ALERT/RDY pin
-     * (D3) to notify tensions over a high threshold. To use this feature, the
+     * (D3) to notify voltages over a high threshold. To use this feature, the
      * alert jumper on arduino must be closed and a interrupt handler must be
      * set with attachinterrupt(6, <interruptHandler>, LOW), where 
      * <interruptHandler> is the function to be called on interrupt signal.
@@ -246,7 +246,7 @@ class Nanoshield_ADC12 {
     /**
      * @brief Sets the library to work on continuous mode.
      * 
-     * In continuous mode, the library will reads the tension value based on a
+     * In continuous mode, the library will reads the voltage value based on a
      * sample rate. For example, if reading at 860Hz, then 860 measures will be
      * done in a second.
      * 
@@ -271,7 +271,7 @@ class Nanoshield_ADC12 {
      * @brief Sets the input gain.
      * 
      * The input gain is used to adjust the converter resolution to the signal
-     * magnitude. Greater gains adjusts lower tensions over the resolution.
+     * magnitude. Greater gains adjusts lower voltages over the resolution.
      * 
      * @param gain A available gain from the Gain_t enumerator.
      * 
