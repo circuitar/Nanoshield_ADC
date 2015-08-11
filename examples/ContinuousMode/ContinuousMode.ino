@@ -10,7 +10,7 @@
 #include <Nanoshield_ADC.h>
 
 // 16-bit ADC (change to Nanoshield_ADC12 to use the 12-bit version)
-Nanoshield_ADC16 adc;
+Nanoshield_ADC adc;
 
 // Use channel 0 (input A0)
 int channel = 0;
@@ -22,8 +22,7 @@ void setup()
   adc.begin();
   
   // Set sample rate. Possible values are:
-  //   - 12-bit (Nanoshield_ADC12): 128, 250, 490, 920, 1600, 2400, 3300
-  //   - 16-bit (Nanoshield_ADC16): 8, 16, 32, 64, 128, 250, 475, 860 
+  //   - 16-bit (Nanoshield_ADC): 8, 16, 32, 64, 128, 250, 475, 860 
   // If not one of the above, the closest lower value will be selected.
   adc.setSampleRate(860);
   

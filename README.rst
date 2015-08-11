@@ -9,7 +9,7 @@ This is the Arduino software library to access the ADC Nanoshield (ADS1x15 IC) f
 
 Library features include:
 
-* Analog to digital conversion with 12/16 bits resolution.
+* Analog to digital conversion with 16 bits resolution.
 * Continuous mode to capture measures with a given sample rate.
 * Gain adjust to pair the signal magnitude with the resolution.
 * Differential voltage measurements.
@@ -26,20 +26,16 @@ The following examples_ are provided:
 - Voltage_ read a voltage in single-ended mode.
 - VoltageWithHighGain_ read a voltage in single-ended mode with a high gain. Increasing the gain allows reading smaller voltages with increased resolution.
 - Voltage4Ch16Bit_ read four voltages in a single 16-bit ADC Nanoshield.
-- Voltage16Ch12Bit_ using multiple boards. Read sixteen voltages across four units of the 12-bit ADC Nanoshield. Make sure that the solder jumpers for the I2C address are properly configured to support this example.
 - DifferentialVoltage_ read a differential voltage between inputs 2 (+) and 3 (-). The channels can be easily changed to 0 (+) and 1 (-).
 - Read4to20mA_ how to read data from industrial 4-20mA sensors (or 4-20mA "transmistters"). Make sure that ADC Nanoshield being used is factory configured for this type of operation.
 - ContinuousMode_ read data in continuous mode to achieve high sample rates.
 - ContinuousMode4Ch_ read multiple channels in continuous mode.
-
-Most examples are provided for the 16-bit version of the ADC Nanoshield, but can be easily modified to support the 12-bit version by changing the type of the `adc` variable from `Nanoshield_ADC16` to `Nanoshield_ADC12`.
 
 .. _`ADC Nanoshield`: https://www.circuitar.com.br/nanoshields/modulos/adc/
 .. _examples: https://github.com/circuitar/Nanoshield_ADC/tree/master/examples
 .. _Voltage: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/Voltage/Voltage.ino
 .. _VoltageWithHighGain: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/VoltageWithHighGain/VoltageWithHighGain.ino
 .. _Voltage4Ch16Bit: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/Voltage4Ch16Bit/Voltage4Ch16Bit.ino
-.. _Voltage16Ch12Bit: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/Voltage16Ch12Bit/Voltage16Ch12Bit.ino
 .. _DifferentialVoltage: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/DifferentialVoltage/DifferentialVoltage.ino
 .. _Read4to20mA: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/Read4to20mA/Read4to20mA.ino
 .. _ContinuousMode: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/ContinuousMode/ContinuousMode.ino

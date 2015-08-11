@@ -122,10 +122,9 @@ typedef enum {
   GAIN_SIXTEEN      = ADS1015_REG_CONFIG_PGA_0_256V  /// Reads voltages up to 0.256V.
 } Gain_t;
 
-class Nanoshield_ADC12 {
+class Nanoshield_ADC {
   protected:
     uint8_t m_i2cAddress;
-    uint8_t m_bitShift;
     Gain_t m_gain;
     float m_range;
     uint16_t m_spsMask;
@@ -136,28 +135,22 @@ class Nanoshield_ADC12 {
     uint32_t getNextReadingTime();
 
   public:
-
     /**
      * @brief Constructor
      * 
-     * Instantiates an object to control the Nanoshield_ADC12 (12 bits 
-     * resolution) converter. If using the 16 bits version, use
-     * Nanoshield_ADC16
+     * Instantiates an object to control the Nanoshield_ADC (16 bits 
+     * resolution) converter.
      * 
      * @param i2cAddress The nanoshield I2C address on the bus.
      * 
-     * @see Nanoshield_ADC16
+     * @see begin()
      */
-    Nanoshield_ADC12(uint8_t i2cAddress = ADS1X15_ADDRESS);
+    Nanoshield_ADC(uint8_t i2cAddress = ADS1X15_ADDRESS);
 
     /**
-     * @brief Writes to Nanoshield ADC config register.
-     * 
-     * @param i2cAddress I2C address of the Nanoshield ADC.
-     * @param reg Config register address to write.
-     * @param value Value to write.
+     * @brief Initializes the module.
      */
-    void writeRegister(uint8_t, uint8_t, uint16_t);
+    void begin();
 
     /**
      * @brief Read a Nanoshield ADC register.
@@ -170,9 +163,41 @@ class Nanoshield_ADC12 {
     uint16_t readRegister(uint8_t, uint8_t);
 
     /**
-     * @brief Initializes the module.
+     * @brief Writes to Nanoshield ADC config register.
+     * 
+     * @param i2cAddress I2C address of the Nanoshield ADC.
+     * @param reg Config register address to write.
+     * @param value Value to write.
      */
-    void begin();
+    void writeRegister(uint8_t, uint8_t, uint16_t);
+
+    /**
+     * @brief Checks if there is data available to read.
+     * 
+     * @return True if no conversion is being done and the value is ready to be
+     *         read. Otherwise, false.
+     */
+    bool conversionDone();
+
+    /**
+     * @brief Reads the binary voltage requested when it is ready.
+     * 
+     * To use when in continuous mode. Same as readNext().
+     * 
+     * @return The binary voltage representation.
+     * 
+     * @see readNext()
+     */
+    int16_t getLastConversionResults();
+
+    /**
+     * @brief Reads the binary voltage requested when it is ready.
+     * 
+     * To use when in continuous mode.
+     * 
+     * @return The binary voltage representation.
+     */
+    int16_t readNext();
 
     /**
      * @brief Reads channel binary voltage.
@@ -203,15 +228,6 @@ class Nanoshield_ADC12 {
      * @return Binary representation of the differential voltage.
      */
     int16_t readADC_Differential_2_3();
-
-    /**
-     * @brief Reads the binary voltage requested when it is ready.
-     * 
-     * To use when in continuous mode.
-     * 
-     * @return The binary voltage representation.
-     */
-    int16_t getLastConversionResults();
 
     /**
      * @brief Sets the Nanoshield ADC in comparator mode.
@@ -258,23 +274,6 @@ class Nanoshield_ADC12 {
      * @param lowThreshold The low threshold to set ALERT/RDY pin HIGH.
      */
     void startComparator_SingleEnded(uint8_t, int16_t, int16_t);
-
-    /**
-     * @brief Checks if there is data available to read.
-     * 
-     * @return True if no conversion is being done and the value is ready to be
-     *         read. Otherwise, false.
-     */
-    bool conversionDone();
-
-    /**
-     * @brief Reads the binary voltage requested when it is ready.
-     * 
-     * To use when in continuous mode.
-     * 
-     * @return The binary voltage representation.
-     */
-    int16_t readNext();
 
     /**
      * @brief Sets the library to work on continuous mode.
@@ -334,83 +333,7 @@ class Nanoshield_ADC12 {
      * 
      * @param sps Sample rate. Possible values are:
      *            - If using Nanoshield_ADC12 (12 bits): 128, 250, 490, 920, 1600, 2400, 3300
-     *            - If using Nanoshield_ADC16 (16 bits): 8, 16, 32, 64, 128, 250, 475, 860
-     *            If no one of the above, the closest lower value will be selected.
-     *            
-     * @see setContiuous()
-     */
-    virtual void setSampleRate(uint16_t sps = 1600);
-
-    /**
-     * @brief Gets actual Nanoshield_ADC sample rate.
-     *
-     * @return Actual sample rate set.
-     */
-    virtual uint16_t getSampleRate();
-
-    /**
-     * @brief Reads channel voltage.
-     * 
-     * @param  channel Channel to read. Must be in 0, 1, 2 or 3.
-     * @return The voltage read up to 5V.
-     */
-    virtual float readVoltage(uint8_t);
-
-    /**
-     * @brief Reads channel current from 4mA to 20mA.
-     * 
-     * @param  channel Channel to read. Must be in 0, 1, 2 or 3.
-     * @return The current on channel from 4mA to 20mA.
-     */
-    float read4to20mA(uint8_t);
-
-    /**
-     * @brief Reads voltage in differential mode between channels 0(+) and 1(-).
-     * 
-     * Reads the difference between voltages in channel 0(+) and 1(-). For
-     * example, if the voltage in both channels is the same, then the 
-     * differential voltage is zero. Notice that the voltage margin in channels
-     * still 0V to 5V in relation to GND.
-     * 
-     * @return The difference between the voltages in channel 0(+) and 1(-).
-     */
-    virtual float readDifferentialVoltage01();
-
-    /**
-     * @brief Reads voltage in differential mode between channels 2(+) and 3(-).
-     * 
-     * Reads the difference between voltages in channel 2(+) and 3(-). For
-     * example, if the voltage in both channels is the same, then the 
-     * differential voltage is zero. Notice that the voltage margin in channels
-     * still 0V to 5V in relation to GND.
-     * 
-     * @return The difference between the voltages in channel 2(+) and 3(-).
-     */
-    virtual float readDifferentialVoltage23();
-};
-
-class Nanoshield_ADC16 : public Nanoshield_ADC12 {
-  public:
-
-    /**
-     * @brief Constructor
-     * 
-     * Instantiates an object to control the Nanoshield_ADC16 (16 bits 
-     * resolution) converter. If using the 12 bits version, use
-     * Nanoshield_ADC12
-     * 
-     * @param i2cAddress The nanoshield I2C address on the bus.
-     * 
-     * @see Nanoshield_ADC12
-     */
-    Nanoshield_ADC16(uint8_t i2cAddress = ADS1X15_ADDRESS);
-
-    /**
-     * @brief Sets the conversor sample rate on continuous mode
-     * 
-     * @param sps Sample rate. Possible values are:
-     *            - If using Nanoshield_ADC12 (12 bits): 128, 250, 490, 920, 1600, 2400, 3300
-     *            - If using Nanoshield_ADC16 (16 bits): 8, 16, 32, 64, 128, 250, 475, 860
+     *            - If using Nanoshield_ADC (16 bits): 8, 16, 32, 64, 128, 250, 475, 860
      *            If no one of the above, the closest lower value will be selected.
      *            
      * @see setContiuous()
@@ -423,6 +346,14 @@ class Nanoshield_ADC16 : public Nanoshield_ADC12 {
      * @return Actual sample rate set.
      */
     virtual uint16_t getSampleRate();
+
+    /**
+     * @brief Reads channel current from 4mA to 20mA.
+     * 
+     * @param  channel Channel to read. Must be in 0, 1, 2 or 3.
+     * @return The current on channel from 4mA to 20mA.
+     */
+    float read4to20mA(uint8_t);
 
     /**
      * @brief Reads channel voltage.

@@ -16,7 +16,7 @@
 
 void adcComparatorHandler();
 
-Nanoshield_ADC16 adc;
+Nanoshield_ADC adc;
 int channel  = 2;
 int16_t hthreshold = 15000;
 int16_t lthreshold = 10000;
