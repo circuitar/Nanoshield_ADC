@@ -17,7 +17,7 @@ Library features include:
 
 To install, just click **Download ZIP** and install it using **Sketch > Include Library... > Add .ZIP Library** in the Arduino IDE.
 
-This library is based on the [Adafruit_ADS1X15](https://github.com/adafruit/Adafruit_ADS1X15) library from Adafruit.
+This library is based on the `Adafruit_ADS1X15`_ library from Adafruit.
 
 ----
 
@@ -35,6 +35,7 @@ The following examples_ are provided:
 
 .. _`ADC Nanoshield`: https://www.circuitar.com/nanoshields/modules/adc/
 .. _`4-20 ADC Nanoshield`: https://www.circuitar.com/nanoshields/modules/adc-4-20/
+.. _`Adafruit_ADS1X15`: https://github.com/adafruit/Adafruit_ADS1X15
 .. _examples: https://github.com/circuitar/Nanoshield_ADC/tree/master/examples
 .. _Voltage: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/Voltage/Voltage.ino
 .. _VoltageWithHighGain: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/VoltageWithHighGain/VoltageWithHighGain.ino
