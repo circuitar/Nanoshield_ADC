@@ -1,4 +1,5 @@
 /**
+ * @file comparator.ino
  * Reads a voltage above high threshold using interruption.
  * 
  * To use this example the alert jumper on Nanoshield ADC must be closed.
@@ -11,16 +12,17 @@
  */
 #include <Wire.h>
 #include <Nanoshield_ADC.h>
+#include <util/atomic.h>
 
 void adcComparatorHandler();
 
 Nanoshield_ADC16 adc;
-int channel = 2;
+int channel  = 2;
 int16_t hthreshold = 15000;
 int16_t lthreshold = 10000;
 int alertPin = 3;
 int int1 = 1;
-int interruption = 0;
+bool interruption  = false;
 long lastExecution = 0;
 
 void setup() {
@@ -35,7 +37,7 @@ void setup() {
 
   adc.begin();  // Start Nanoshield_ADC library
   adc.setSampleRate(860);    // Set a sample rate of 64Hz.
-  adc.setContinuous(true);  // Enter coninuous mode.
+  adc.setContinuous(true);   // Enter continuous mode.
   adc.setComparator(channel, hthreshold, lthreshold);  // Set comparator mode
   adc.readADC_SingleEnded(channel); // Set channel to read
 
@@ -65,14 +67,16 @@ void loop() {
     }
   }
   
-  // Process interruption flag.
-  if(interruption == 1) {
-    Serial.println("Interruption triggered!\n");
-    interruption = 0;
+  // Process interruption flag atomically.
+  ATOMIC_BLOCK(ATOMIC_FORCEON) {
+    if(interruption) {
+      Serial.println("Interruption triggered!\n");
+      interruption = false;
+    }
   }
 }
 
 void adcComparatorHandler() {
   // Set interruption flag
-  interruption = 1;
+  interruption = true;
 }

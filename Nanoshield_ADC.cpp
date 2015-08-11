@@ -53,7 +53,7 @@ uint16_t Nanoshield_ADC12::getConfig() {
   // Build default config
   return ADS1015_REG_CONFIG_CPOL_ACTVLOW | // Alert/Rdy active low   (default val)
          ADS1015_REG_CONFIG_CMODE_TRAD   | // Traditional comparator (default val)
-         ADS1015_REG_CONFIG_CLAT_NONLAT   | // Latches ALERT/RDY until conversion data is read
+         ADS1015_REG_CONFIG_CLAT_NONLAT  | // ALERT/RDY pin in non-latching mode.
          m_spsMask                       | // Samples per second
                                            // Mode: single shot or continuous
          (m_continuous ? ADS1015_REG_CONFIG_MODE_CONTIN : ADS1015_REG_CONFIG_MODE_SINGLE) |
