@@ -9,7 +9,7 @@
 #include <Wire.h>
 #include <Nanoshield_ADC.h>
 
-Nanoshield_ADC12 adc[4] = { 0x48, 0x49, 0x4A, 0x4B };
+Nanoshield_ADC adc[4] = { 0x48, 0x49, 0x4A, 0x4B };
 
 void setup()
 {

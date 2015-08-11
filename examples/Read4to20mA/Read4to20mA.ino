@@ -9,7 +9,7 @@
 #include <Wire.h>
 #include <Nanoshield_ADC.h>
 
-Nanoshield_ADC16 adc;
+Nanoshield_ADC adc;
 int channel = 0;
 
 void setup()

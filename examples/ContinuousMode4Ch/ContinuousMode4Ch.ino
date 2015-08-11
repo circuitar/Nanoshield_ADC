@@ -14,8 +14,7 @@
 // Sampling time per channel, in milliseconds
 #define SAMPLING_TIME 200
 
-// 16-bit ADC (change to Nanoshield_ADC12 to use the 12-bit version)
-Nanoshield_ADC16 adc;
+Nanoshield_ADC adc;
 
 // Current channel
 int channel = 0;
