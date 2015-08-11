@@ -5,7 +5,7 @@ This is the Arduino software library to access the ADC Nanoshield (ADS1x15 IC) f
 
 * Source code: https://github.com/circuitar/Nanoshield_ADC
 * Documentation: http://nanoshield-adc.readthedocs.org/
-* Reference board: `ADC Nanoshield`_ from Circuitar
+* Reference boards: `ADC Nanoshield`_ and `4-20 ADC Nanoshield`_ from Circuitar
 
 Library features include:
 
@@ -26,14 +26,15 @@ The following examples_ are provided:
 - Voltage_ read a voltage in single-ended mode.
 - VoltageWithHighGain_ read a voltage in single-ended mode with a high gain. Increasing the gain allows reading smaller voltages with increased resolution.
 - Voltage4Ch_ read four voltages in a single ADC Nanoshield.
-- Voltage16Ch_ using multiple boards. Read sixteen voltages across four units of the ADC Nanoshield. Make sure that the solder jumpers for the I2C address are properly configured to support this example.
+- Voltage16Ch_ using multiple boards. Read sixteen voltages across four units of the ADC Nanoshield. Make sure that the jumpers for the I2C address are properly configured to support this example.
 - DifferentialVoltage_ read a differential voltage between inputs 2 (+) and 3 (-). The channels can be easily changed to 0 (+) and 1 (-).
-- Read4to20mA_ how to read data from industrial 4-20mA sensors (or 4-20mA "transmistters"). Make sure that ADC Nanoshield being used is factory configured for this type of operation.
+- Read4to20mA_ how to read data from industrial 4-20mA sensors (or 4-20mA "transmistters"). Make sure to use the 4-20 ADC Nanoshield board for this example.
 - ContinuousMode_ read data in continuous mode to achieve high sample rates.
 - ContinuousMode4Ch_ read multiple channels in continuous mode.
 - Comparator_ trigger interruptions on arduino using the Nanoshield ADC in comparator mode.
 
-.. _`ADC Nanoshield`: https://www.circuitar.com.br/nanoshields/modulos/adc/
+.. _`ADC Nanoshield`: https://www.circuitar.com/nanoshields/modules/adc/
+.. _`4-20 ADC Nanoshield`: https://www.circuitar.com/nanoshields/modules/adc-4-20/
 .. _examples: https://github.com/circuitar/Nanoshield_ADC/tree/master/examples
 .. _Voltage: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/Voltage/Voltage.ino
 .. _VoltageWithHighGain: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/VoltageWithHighGain/VoltageWithHighGain.ino
