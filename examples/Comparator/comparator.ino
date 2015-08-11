@@ -67,10 +67,18 @@ void loop() {
     }
   }
   
-  // Process interruption flag atomically.
+  // Get interruption flag atomically due to possible race conditions.
+  bool localInterruption;
   ATOMIC_BLOCK(ATOMIC_FORCEON) {
-    if(interruption) {
-      Serial.println("Interruption triggered!\n");
+    localInterruption = interruption;
+  }
+
+  // Process interruption flag.
+  if(localInterruption) {
+    Serial.println("Interruption triggered!\n");
+
+    // Reset interruption flag atomically.
+    ATOMIC_BLOCK(ATOMIC_FORCEON) {
       interruption = false;
     }
   }
