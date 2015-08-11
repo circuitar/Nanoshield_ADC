@@ -33,6 +33,7 @@ Nanoshield_ADC12::Nanoshield_ADC12(uint8_t i2cAddress) {
   m_spsMask = ADS1015_REG_CONFIG_DR_1600SPS;
   m_nextReadingTime = 0;
   m_continuous = false;
+  m_comparator = false;
 }
 
 Nanoshield_ADC16::Nanoshield_ADC16(uint8_t i2cAddress) {
@@ -43,6 +44,7 @@ Nanoshield_ADC16::Nanoshield_ADC16(uint8_t i2cAddress) {
   m_spsMask = ADS1115_REG_CONFIG_DR_128SPS;
   m_nextReadingTime = 0;
   m_continuous = false;
+  m_comparator = false;
 }
 
 void Nanoshield_ADC12::begin() {
@@ -51,13 +53,14 @@ void Nanoshield_ADC12::begin() {
 
 uint16_t Nanoshield_ADC12::getConfig() {
   // Build default config
-  return ADS1015_REG_CONFIG_CQUE_NONE    | // Disable the comparator (default val)
-         ADS1015_REG_CONFIG_CLAT_NONLAT  | // Non-latching (default val)
-         ADS1015_REG_CONFIG_CPOL_ACTVLOW | // Alert/Rdy active low   (default val)
+  return ADS1015_REG_CONFIG_CPOL_ACTVLOW | // Alert/Rdy active low   (default val)
          ADS1015_REG_CONFIG_CMODE_TRAD   | // Traditional comparator (default val)
+         ADS1015_REG_CONFIG_CLAT_NONLAT  | // ALERT/RDY pin in non-latching mode.
          m_spsMask                       | // Samples per second
                                            // Mode: single shot or continuous
          (m_continuous ? ADS1015_REG_CONFIG_MODE_CONTIN : ADS1015_REG_CONFIG_MODE_SINGLE) |
+                                           // Mode: comparator or not.
+         (m_comparator ? ADS1015_REG_CONFIG_CQUE_1CONV : ADS1015_REG_CONFIG_CQUE_NONE) |
          m_gain;                           // PGA/voltage range
 }
 
@@ -175,6 +178,8 @@ uint16_t Nanoshield_ADC16::getSampleRate() {
   }
 }
 
+
+
 int16_t Nanoshield_ADC12::readADC_SingleEnded(uint8_t channel) {
   uint16_t config = getConfig();
 
@@ -251,8 +256,21 @@ int16_t Nanoshield_ADC12::readADC_Differential_2_3() {
   return m_continuous ? 0 : readNext();
 }
 
-void Nanoshield_ADC12::startComparator_SingleEnded(uint8_t channel, int16_t threshold) {
+void Nanoshield_ADC12::setComparator(uint8_t channel, int16_t highThreshold, int16_t lowThreshold) {
+  startComparator_SingleEnded(channel, highThreshold, lowThreshold);
+}
+
+void Nanoshield_ADC12::setNotComparator() {
+  m_comparator = false;
+}
+
+bool Nanoshield_ADC12::isComparator() {
+  return m_comparator;
+}
+
+void Nanoshield_ADC12::startComparator_SingleEnded(uint8_t channel, int16_t highThreshold, int16_t lowThreshold) {
   // Comparator must be used in continuous mode
+  m_comparator = true;
   m_continuous = true;
 
   uint16_t config = getConfig();
@@ -276,7 +294,11 @@ void Nanoshield_ADC12::startComparator_SingleEnded(uint8_t channel, int16_t thre
 
   // Set the high threshold register
   // Shift 12-bit results left 4 bits for the ADS1015
-  writeRegister(m_i2cAddress, ADS1015_REG_POINTER_HITHRESH, threshold << m_bitShift);
+  writeRegister(m_i2cAddress, ADS1015_REG_POINTER_HITHRESH, highThreshold << m_bitShift);
+
+  // Set the low threshold register
+  // Shift 12-bit results left 4 bits for the ADS1015
+  writeRegister(m_i2cAddress, ADS1015_REG_POINTER_LOWTHRESH, lowThreshold << m_bitShift);  
 
   // Write config register to the ADC
   writeRegister(m_i2cAddress, ADS1015_REG_POINTER_CONFIG, config);
