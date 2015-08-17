@@ -5,7 +5,7 @@ This is the Arduino software library to access the ADC Nanoshield (ADS1x15 IC) f
 
 * Source code: https://github.com/circuitar/Nanoshield_ADC
 * Documentation: http://nanoshield-adc.readthedocs.org/
-* Reference boards: `ADC Nanoshield`_ and `4-20 ADC Nanoshield`_ from Circuitar
+* Reference boards: `ADC Nanoshield`_ and `4-20 ADC Nanoshield`_ from Circuitar_
 
 Library features include:
 
@@ -35,6 +35,7 @@ The following examples_ are provided:
 
 .. _`ADC Nanoshield`: https://www.circuitar.com/nanoshields/modules/adc/
 .. _`4-20 ADC Nanoshield`: https://www.circuitar.com/nanoshields/modules/adc-4-20/
+.. _Circuitar: https://www.circuitar.com/
 .. _`Adafruit_ADS1X15`: https://github.com/adafruit/Adafruit_ADS1X15
 .. _examples: https://github.com/circuitar/Nanoshield_ADC/tree/master/examples
 .. _Voltage: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/Voltage/Voltage.ino
