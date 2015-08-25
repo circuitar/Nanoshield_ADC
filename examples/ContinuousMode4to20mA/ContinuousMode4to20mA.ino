@@ -21,6 +21,9 @@ void setup()
   Serial.println("ADC Nanoshield - Continuous Mode");
   adc.begin();
   
+  // Adjust gain to two (2.048V range) to get maximum resolution for 4-20mA range
+  adc.setGain(GAIN_TWO);
+
   // Set sample rate. Possible values are:
   //   - 16-bit (Nanoshield_ADC): 8, 16, 32, 64, 128, 250, 475, 860 
   // If not one of the above, the closest lower value will be selected.
