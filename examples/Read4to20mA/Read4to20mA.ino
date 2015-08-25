@@ -19,11 +19,14 @@ void setup()
   Serial.print(channel);
   Serial.println(")");
   adc.begin();
+
+  // Adjust gain to two (2.048V range) to get maximum resolution for 4-20mA range
+  adc.setGain(GAIN_TWO);
 }
 
 void loop()
 {
-  Serial.print(adc.read4to20mA(channel));
+  Serial.print(adc.read4to20mA(channel), 6);
   Serial.println("mA");
   
   delay(1000);

@@ -129,8 +129,6 @@ uint16_t Nanoshield_ADC::getSampleRate() {
   }
 }
 
-
-
 int16_t Nanoshield_ADC::readADC_SingleEnded(uint8_t channel) {
   uint16_t config = getConfig();
 
@@ -312,7 +310,7 @@ uint16_t Nanoshield_ADC::readRegister(uint8_t i2cAddress, uint8_t reg) {
 }
 
 float Nanoshield_ADC::read4to20mA(uint8_t channel) {
-  return (m_continuous ? readNext() : 1000 * readVoltage(channel)) / 100;
+  return 1000 * readVoltage(channel) / 100;
 }
 
 float Nanoshield_ADC::readVoltage(uint8_t channel) {
