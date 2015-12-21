@@ -19,8 +19,6 @@ To install, just click **Download ZIP** and install it using **Sketch > Include 
 
 This library is based on the `Adafruit_ADS1X15`_ library from Adafruit.
 
-----
-
 The following examples_ are provided:
 
 - Voltage_ read a voltage in single-ended mode.
