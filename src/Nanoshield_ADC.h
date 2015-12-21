@@ -123,23 +123,11 @@ typedef enum {
 } Gain_t;
 
 class Nanoshield_ADC {
-  protected:
-    uint8_t m_i2cAddress;
-    Gain_t m_gain;
-    float m_range;
-    uint16_t m_spsMask;
-    uint32_t m_nextReadingTime;
-    bool m_continuous;
-    bool m_comparator;
-    uint16_t getConfig();
-    uint32_t getNextReadingTime();
-
   public:
     /**
      * @brief Constructor
      * 
-     * Instantiates an object to control the Nanoshield_ADC (16 bits 
-     * resolution) converter.
+     * Instantiates an object to control the ADC Nanoshield converter.
      * 
      * @param i2cAddress The nanoshield I2C address on the bus.
      * 
@@ -153,9 +141,9 @@ class Nanoshield_ADC {
     void begin();
 
     /**
-     * @brief Read a Nanoshield ADC register.
+     * @brief Read an ADC Nanoshield register.
      * 
-     * @param i2cAddress I2C address of the Nanoshield ADC.
+     * @param i2cAddress I2C address of the ADC Nanoshield.
      * @param reg Register address to read.
      * 
      * @return The value of the addressed register.
@@ -350,7 +338,7 @@ class Nanoshield_ADC {
     /**
      * @brief Reads channel current from 4mA to 20mA.
      * 
-     * @param  channel Channel to read. Must be in 0, 1, 2 or 3.
+     * @param  channel Channel to read. Must be one of 0, 1, 2 or 3.
      * @return The current on channel from 4mA to 20mA.
      */
     float read4to20mA(uint8_t);
@@ -358,10 +346,10 @@ class Nanoshield_ADC {
     /**
      * @brief Reads channel voltage.
      * 
-     * @param  channel Channel to read. Must be in 0, 1, 2 or 3.
+     * @param  channel Channel to read. Must be one of 0, 1, 2 or 3.
      * @return The voltage read up to 5V.
      */
-    virtual float readVoltage(uint8_t);
+    float readVoltage(uint8_t);
 
     /**
      * @brief Reads voltage in differential mode between channels 0(+) and 1(-).
@@ -373,7 +361,7 @@ class Nanoshield_ADC {
      * 
      * @return The difference between the voltages in channel 0(+) and 1(-).
      */
-    virtual float readDifferentialVoltage01();
+    float readDifferentialVoltage01();
 
     /**
      * @brief Reads voltage in differential mode between channels 2(+) and 3(-).
@@ -385,7 +373,18 @@ class Nanoshield_ADC {
      * 
      * @return The difference between the voltages in channel 2(+) and 3(-).
      */
-    virtual float readDifferentialVoltage23();
+    float readDifferentialVoltage23();
+
+  private:
+    uint8_t m_i2cAddress;
+    Gain_t m_gain;
+    float m_range;
+    uint16_t m_spsMask;
+    uint32_t m_nextReadingTime;
+    bool m_continuous;
+    bool m_comparator;
+    uint16_t getConfig();
+    uint32_t getNextReadingTime();
 };
 
 #endif

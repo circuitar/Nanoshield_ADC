@@ -7,11 +7,7 @@
 Class Documentation
 ===================
 
-.. doxygenclass:: Nanoshield_ADC12
-   :project: Nanoshield_ADC
-   :members:
-
-.. doxygenclass:: Nanoshield_ADC16
+.. doxygenclass:: Nanoshield_ADC
    :project: Nanoshield_ADC
    :members:
 
