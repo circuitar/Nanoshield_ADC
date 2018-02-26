@@ -14,7 +14,7 @@ Nanoshield_ADC adc[4] = { 0x48, 0x49, 0x4A, 0x4B };
 void setup()
 {
   Serial.begin(9600);
-  Serial.println("ADC Nanoshield Test - Voltage Measurement - 16 x 12-bit");
+  Serial.println("ADC Nanoshield Test - Voltage Measurement - 16 x 16-bit");
   Serial.println("");
 
   for (int i = 0; i < 4; i++) {
