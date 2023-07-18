@@ -32,9 +32,9 @@ The following examples_ are provided:
 - Comparator_: trigger interruptions on arduino using the ADC Nanoshield in comparator mode.
 - RawAdcValue_: read the raw ADC value in single-ended mode.
 
-.. _`ADC Nanoshield`: https://www.circuitar.com/nanoshields/modules/adc/
-.. _`4-20 ADC Nanoshield`: https://www.circuitar.com/nanoshields/modules/adc-4-20/
-.. _Circuitar: https://www.circuitar.com/
+.. _`ADC Nanoshield`: https://www.circuitar.com.br/nanoshields/modulos/adc/
+.. _`4-20 ADC Nanoshield`: https://www.circuitar.com.br/nanoshields/modulos/adc-4-20/
+.. _Circuitar: https://www.circuitar.com.br/
 .. _`Adafruit_ADS1X15`: https://github.com/adafruit/Adafruit_ADS1X15
 .. _examples: https://github.com/circuitar/Nanoshield_ADC/tree/master/examples
 .. _Voltage: https://github.com/circuitar/Nanoshield_ADC/blob/master/examples/Voltage/Voltage.ino
